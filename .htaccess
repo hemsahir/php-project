@@ -1,0 +1,12 @@
+RewriteEngine On
+
+# Route everything through index.php
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# For subpage slugs like /page/about-us
+RewriteRule ^page/([a-z0-9\-]+)$ index.php?page_slug=$1 [QSA,L]
+
+# Ensure default home works as root
+DirectoryIndex index.php
+

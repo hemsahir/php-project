@@ -44,14 +44,14 @@ if (isset($_POST['save_sub_page'])) {
 
 // Add Sub Pages
 if (isset($_POST['add_sub_page']) && isset($_POST['sub_title_en']) && is_array($_POST['sub_title_en'])) {
-    $parent_id = $_POST['parent_page_id'];
+    $parent_id = intval($_POST['parent_page_id']);
     foreach ($_POST['sub_title_en'] as $i => $title_en) {
-        $title_hi = $_POST['sub_title_hi'][$i];
-        $content_en = $_POST['sub_content_en'][$i];
-        $content_hi = $_POST['sub_content_hi'][$i];
-
+        $title_en = mysqli_real_escape_string($conn, $title_en);
+        $title_hi = mysqli_real_escape_string($conn, $_POST['sub_title_hi'][$i]);
+        $content_en = mysqli_real_escape_string($conn, $_POST['sub_content_en'][$i]);
+        $content_hi = mysqli_real_escape_string($conn, $_POST['sub_content_hi'][$i]);
         $conn->query("INSERT INTO sub_pages (page_id, title_en, title_hi, content_en, content_hi)
-                      VALUES ('$parent_id', '$title_en', '$title_hi', '$content_en', '$content_hi')");
+                    VALUES ('$parent_id', '$title_en', '$title_hi', '$content_en', '$content_hi')");
     }
     $msg = "✅ Sub-pages added.";
 }
@@ -82,15 +82,25 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../assets/js/tinymce/tinymce.min.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        tinymce.init({
+            selector: 'textarea.wysiwyg',
+            menubar: false
+        });
+    });
+</script>
+
+
+
     <style>
-        .action-icons {
-            position: absolute;
-            top: 10px;
-            right: 20px;
-            z-index: 5;
+        .accordion-button {
+            background-color: #f8f9fa;
         }
-        .accordion-header {
-            position: relative;
+
+        .accordion-header .btn {
+            z-index: 2;
         }
     </style>
 </head>
@@ -104,11 +114,11 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
         <input type="hidden" name="main_id" id="main_id">
         <div class="mb-3">
             <label>Main Page Title (English)</label>
-            <input type="text" name="title_en" id="title_en" class="form-control" required>
+            <input type="text" name="title_en" id="title_en" class="form-control">
         </div>
         <div class="mb-3">
             <label>Main Page Title (Hindi)</label>
-            <input type="text" name="title_hi" id="title_hi" class="form-control" required>
+            <input type="text" name="title_hi" id="title_hi" class="form-control">
         </div>
         <div class="mb-3">
             <label>Sort Order</label>
@@ -118,26 +128,28 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
     </form>
 
     <!-- Accordion Display -->
-    <form method="POST">
         <div class="accordion" id="pageAccordion">
             <?php while ($page = $pages_result->fetch_assoc()) {
                 $sub_pages = $conn->query("SELECT * FROM sub_pages WHERE page_id = " . $page['id']);
                 ?>
+                <form method="POST">
                 <div class="accordion-item mb-3">
-                    <h2 class="accordion-header" id="heading<?= $page['id'] ?>">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapse<?= $page['id'] ?>" aria-expanded="false">
-                            <?= $page['title_en'] ?> / <?= $page['title_hi'] ?>
-                        </button>
-                        <div class="action-icons">
-                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="editMainPage(<?= $page['id'] ?>, '<?= $page['title_en'] ?>', '<?= $page['title_hi'] ?>', <?= $page['sort_order'] ?>)">
+                    <h2 class="accordion-header d-flex align-items-center justify-content-between" id="heading<?= $page['id'] ?>">
+                        <div class="action-icons d-flex gap-2 ps-2">
+                            <button type="button" class="btn btn-sm btn-outline-primary"
+                                onclick="editMainPage(<?= $page['id'] ?>, '<?= $page['title_en'] ?>', '<?= $page['title_hi'] ?>', <?= $page['sort_order'] ?>)">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
                             <a href="?delete_main=<?= $page['id'] ?>" class="btn btn-sm btn-outline-danger"
-                               onclick="return confirm('Delete this main page and its sub-pages?')">
-                               <i class="bi bi-trash-fill"></i>
+                                onclick="return confirm('Delete this main page and its sub-pages?')">
+                                <i class="bi bi-trash-fill"></i>
                             </a>
                         </div>
+                        <button class="accordion-button collapsed flex-grow-1 ms-2" type="button"
+                            data-bs-toggle="collapse" data-bs-target="#collapse<?= $page['id'] ?>"
+                            aria-expanded="false" aria-controls="collapse<?= $page['id'] ?>">
+                            <?= $page['title_en'] ?> / <?= $page['title_hi'] ?>
+                        </button>
                     </h2>
                     <div id="collapse<?= $page['id'] ?>" class="accordion-collapse collapse"
                          data-bs-parent="#pageAccordion">
@@ -170,15 +182,15 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
                                     </div>
                                 <?php } ?>
                             </div>
+                            <?php if ($pages_result->num_rows > 0) { ?>
+                                <button type="submit" name="add_sub_page" class="btn btn-success mt-4">Save All Sub-pages</button>
+                            <?php }?>
                         </div>
                     </div>
                 </div>
+                </form>
             <?php } ?>
         </div>
-        <?php if ($pages_result->num_rows > 0) { ?>
-            <button type="submit" name="add_sub_page" class="btn btn-success mt-4">Save All Sub-pages</button>
-        <?php }?>
-    </form>
 </div>
 
 <!-- Template for sub-page entry -->
@@ -186,19 +198,54 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
     <div class="border p-3 mb-3 bg-light rounded">
         <div class="row">
             <div class="col-md-6 mb-2">
-                <input type="text" name="sub_title_en[]" class="form-control" placeholder="Sub-page Title (EN)" required>
+                <input type="text" name="sub_title_en[]" class="form-control" placeholder="Sub-page Title (EN)">
             </div>
             <div class="col-md-6 mb-2">
-                <input type="text" name="sub_title_hi[]" class="form-control" placeholder="Sub-page Title (HI)" required>
+                <input type="text" name="sub_title_hi[]" class="form-control" placeholder="Sub-page Title (HI)">
             </div>
         </div>
-        <textarea name="sub_content_en[]" class="form-control mb-2" placeholder="Content (EN)" rows="2" required></textarea>
-        <textarea name="sub_content_hi[]" class="form-control mb-2" placeholder="Content (HI)" rows="2" required></textarea>
+        <textarea name="sub_content_en[]" class="form-control mb-2 wysiwyg mb-2" placeholder="Content (EN)" rows="2"></textarea>
+        <textarea name="sub_content_hi[]" class="form-control mb-2 wysiwyg mb-2" placeholder="Content (HI)" rows="2"></textarea>
         <button type="button" class="btn btn-sm btn-danger remove-sub-page">Remove</button>
     </div>
 </template>
 
 <script>
+    document.querySelector('form').addEventListener('submit', function(e) {
+        let valid = true;
+
+        // Validate Main Page Fields (only if saving main page)
+        const mainTitleEn = document.getElementById('title_en')?.value.trim();
+        const mainTitleHi = document.getElementById('title_hi')?.value.trim();
+        if (document.querySelector('[name="save_main_page"]') && !mainTitleEn && !mainTitleHi) {
+            alert('Fill at least one of Main Page Title (EN or HI)');
+            valid = false;
+        }
+
+        // Validate each Sub-page block
+        document.querySelectorAll('.sub-page-wrapper').forEach(wrapper => {
+            wrapper.querySelectorAll('.border').forEach(subBlock => {
+                const enTitle = subBlock.querySelector('[name="sub_title_en[]"]')?.value.trim();
+                const hiTitle = subBlock.querySelector('[name="sub_title_hi[]"]')?.value.trim();
+                const enContent = subBlock.querySelector('[name="sub_content_en[]"]')?.value.trim();
+                const hiContent = subBlock.querySelector('[name="sub_content_hi[]"]')?.value.trim();
+
+                if (!enTitle && !hiTitle) {
+                    alert('Each Sub-page must have at least Title EN or HI');
+                    valid = false;
+                }
+                if (!enContent && !hiContent) {
+                    alert('Each Sub-page must have at least Content EN or HI');
+                    valid = false;
+                }
+            });
+        });
+
+        if (!valid) {
+            e.preventDefault(); // Stop form submit
+        }
+    });
+
     function editMainPage(id, en, hi, sort) {
         document.getElementById('main_id').value = id;
         document.getElementById('title_en').value = en;
