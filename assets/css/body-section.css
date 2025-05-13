@@ -29,27 +29,29 @@
 .text-slide1 {
   width: 20px;
   height: 20px;
-  background: url('play-icon.svg') no-repeat center;
+  /* background: url('play-icon.svg') no-repeat center; */
   cursor: pointer;
 }
 
 .text-slide.play,
 .text-slide01.play,
 .text-slide1.play {
-  background: url('pause-icon.svg') no-repeat center;
+  /* background: url('pause-icon.svg') no-repeat center; */
 }
 
 
 /* Optional tweaks */
-.view-footer {
+.view-footer-tender {
     text-align: right;
     padding-top: 10px;
 }
 /* Container flexbox layout */
 .banner-container {
   display: flex;
+  align-items: stretch;
   justify-content: space-between;
   flex-wrap: wrap;
+  gap: 20px;
 }
 /* Page tabs and tender section styled similarly */
 .left-col-2 {
@@ -67,11 +69,11 @@
     background: #DF3322;
 }
 /* Individual right-side boxes */
-.banner-box-wrapper {
+/* .banner-box-wrapper {
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
+} */
  .banner-box h2 {
     padding-bottom: 5px;
     font-size: 150%;
@@ -99,11 +101,11 @@
     text-align: left;
     color: #fff;
     text-transform: uppercase;
-    margin: 10px 0;
-    padding: 15px 20px;
+    /* margin: 10px 0;
+    padding: 15px 20px; */
     border-radius: 8px;
-    /* margin: 25px 0px 35px 10px; */
-    /* padding: 30px 30px; */
+    margin: 25px 0px 35px 10px;
+    padding: 30px 30px;
 }
 .banner-box.banner-box-2 {
     background: #AB4509;
@@ -118,8 +120,7 @@
   color: #00bfff;
   text-decoration: none;
 }
-.view-footer a {
-  color: #00bfff;
+.view-footer-tender a {
   text-decoration: none;
   font-weight: bold;
 }
@@ -129,7 +130,7 @@ ul.list {
   margin: 0;
 }
 .list-content a {
-  color: #fff;
+  color: #000;
   text-decoration: none;
 }
 .list-content a:hover {
@@ -137,9 +138,9 @@ ul.list {
 }
 /* Responsive tweaks */
 @media (max-width: 768px) {
-  .left-block, .banner-right-wrapper {
+  /* .left-block {
     width: 100%;
-  }
+  } */
 }
 .wrapper.home-banner {
     background: #000;
@@ -149,6 +150,7 @@ ul.list {
 .left-block {
     float: left;
     width: 68%;
+    display: flex;
     padding: 25px 0px;
 }
 .left-block .left-col-2:nth-child(1) {
@@ -224,6 +226,10 @@ ul.resp-tabs-list {
 }
 .resp-tab-content {
     font-size: 100%;
+    display: none;
+}
+.resp-tab-content-active {
+  display: block;
 }
 .text-slide, .text-slide01, .text-slide1 {
     float: right;
@@ -243,7 +249,7 @@ ul.resp-tabs-list {
 .page-tab .text-slide, .page-tab .text-slide01 {
     position: absolute;
     right: 10px;
-    top: -30px;
+    top: -35px;
 }
 .text-slide.pause:after, .text-slide01.pause:after, .text-slide1.pause::after {
     content: " || ";
@@ -253,14 +259,19 @@ ul.resp-tabs-list {
     content: " > ";
     font-size: 22px;
 }
-.page-tab .scroll-left, .page-tab .scroll-text-1, .page-tab .scroll-text, .page-tab .scroll-text01, .page-tab .scroll-test01 {
+.page-tab .scroll-left, .page-tab .scroll-text, .page-tab .scroll-text01, .page-tab .scroll-test01 {
     height: 305px;
     padding: 0px;
 }
-.scroll-left, .scroll-text-1, .scroll-text {
+.scroll-text-1 {
+    height: 305px !important;
+    padding: 0px;
+}
+.scroll-left, .scroll-text-1,.scroll-text01, .scroll-text {
     overflow: hidden;
     position: relative;
-    height: 315px;
+    /* height: 315px; */
+    height: 200px;
     padding-top: 10px;
 }
 .body-container .content-wrapper ul.list {
@@ -322,19 +333,23 @@ ul.resp-tabs-list {
 .resp-tab-content ul.list li a {
     color: #000;
 }
-.page-tab .view-footer a {
+.page-tab .view-footer-tender a {
     margin-right: 15px;
     margin-bottom: 10px;
 }
-.view-footer a {
+.view-footer-tender a {
     padding: 10px 10px;
     font-size: 100%;
     text-align: right;
     display: inline-block;
     text-decoration: none;
-    float: right;
-    border: 1px solid #D2412D;
-    color: #D2412D;
+    border: 1px solid #a6690c;
+    color: #a6690c !important;
+}
+.view-footer-tender a:hover {
+  background: #a6690c;
+  color: #fff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
 }
 .resp-tabs-container a {
     background: url(../uploads/arow-white.png) no-repeat left bottom 25px;
@@ -346,7 +361,7 @@ ul.resp-tabs-list {
     font-size: 100%;
     line-height: 120%;
 }
-.view-footer span {
+.view-footer-tender span {
     text-transform: uppercase;
 }
 .left-col-2 h2 {

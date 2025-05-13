@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/body-section.css">
   <script src="assets/js/body-section.js" defer></script>
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
 
 <section id="fontSize" class="wrapper body-wrapper" style="font-size: 100%;">
@@ -128,100 +129,156 @@
 
 
 <!-- Tender & What's New Section -->
-
-<div class="wrapper home-banner">
-  <div class="container common-container four_content banner-container body-container top-body-container">
-    <div class="left-block">
-      <div class="left-col-2">
-        <div class="page-tab clearfix">
-          <div class="page-tab-res clearfix">
-            <div id="parentHorizontalTab" style="display: block; width: 100%; margin: 0px;">
-              <ul class="resp-tabs-list hor_1">
-                <li class="resp-tab-item hor_1 resp-tab-active"><a href="#" id="tab-list-1">What's New</a></li>
-                <li class="resp-tab-item hor_1"><a href="#">Press Release</a></li>
-              </ul>
-              <div class="resp-tabs-container hor_1" style="border-color: rgb(76, 77, 82);">
-                <!-- What's New Tab -->
-                <div class="resp-tab-content hor_1 resp-tab-content-active" id="hor_1_tab_item-0">
-                  <div class="content-wrapper">
-                    <p class="text-slide pause" onclick="changeClass()"></p>
-                    <div class="scroll-text">
-                      <ul class="list">
-                        <li><div class="list-content"><a href="sample1.pdf" target="_blank">Public notice regarding mock drill on 07 May 2025</a></div></li>
-                        <li><div class="list-content"><a href="sample2.jpg" target="_blank">#OperationSindoor Jai Hind!</a></div></li>
-                        <li><div class="list-content"><a href="sample3.jpg" target="_blank">Vasudev Temple - 05/05/2025</a></div></li>
-                      </ul>
+    <div class="wrapper home-banner">
+      <div class="container common-container four_content banner-container body-container top-body-container">
+        <div class="left-block">
+          <div class="left-col-2">
+            <div class="page-tab clearfix">
+              <div class="page-tab-res clearfix">
+                <div id="parentHorizontalTab" style="display: block; width: 100%; margin: 0px;">
+                  <ul class="resp-tabs-list hor_1">
+                    <li class="resp-tab-item hor_1 resp-tab-active"><a href="#parentHorizontalTab1" id="tab-list-1">What's New</a></li>
+                    <li class="resp-tab-item hor_1"><a href="#parentHorizontalTab2">Press Release</a></li>
+                  </ul>
+                  <div class="resp-tabs-container hor_1" style="border-color: rgb(76, 77, 82);">
+                    <!-- What's New Tab -->
+                    <div class="resp-tab-content hor_1 resp-tab-content-active" id="hor_1_tab_item-0">
+                      <div class="content-wrapper">
+                        <p class="text-slide pause" onclick="changeClass()"></p>
+                        <div class="scroll-text">
+                          <ul class="list">
+                            <li><div class="list-content"><a href="sample1.pdf" target="_blank">Public notice regarding mock drill on 07 May 2025</a></div></li>
+                            <li><div class="list-content"><a href="sample2.jpg" target="_blank">#OperationSindoor Jai Hind!</a></div></li>
+                            <li><div class="list-content"><a href="sample3.jpg" target="_blank">Vasudev Temple - 05/05/2025</a></div></li>
+                          </ul>
+                        </div>
+                        <div class="view-footer-tender"><a href="landing/WhatsNewViewAll.aspx" title="Read More"><span>Read More &gt;</span></a></div>
+                      </div>
                     </div>
-                    <div class="view-footer"><a href="landing/WhatsNewViewAll.aspx" title="Read More"><span>Read More &gt;</span></a></div>
-                  </div>
+
+                    <!-- Press Release Tab -->
+                    <div class="resp-tab-content hor_1" id="hor_1_tab_item-1">
+                      <div class="content-wrapper">
+                        <p class="text-slide01 pause" onclick="changeClass01()"></p>
+                        <div class="scroll-text01">
+                          <ul class="list">
+                            <li><div class="list-content"><a href="press1.pdf" target="_blank">Press release on mock drill 07/05/2025</a></div></li>
+                            <li><div class="list-content"><a href="press2.jpg" target="_blank">Tulsi Park - 05/05/2025</a></div></li>
+                          </ul>
+                        </div>
+                        <div class="view-footer-tender"><a href="landing/PressReleaseViewAll.aspx" title="Read More"><span>Read More &gt;</span></a></div>
+                      </div>
+                    </div>
+                  </div> 
                 </div>
-
-                <!-- Press Release Tab -->
-                <!-- <div class="resp-tab-content hor_1" id="hor_1_tab_item-1">
-                  <div class="content-wrapper">
-                    <p class="text-slide01 pause" onclick="changeClass01()"></p>
-                    <div class="scroll-text01">
-                      <ul class="list">
-                        <li><div class="list-content"><a href="press1.pdf" target="_blank">Press release on mock drill 07/05/2025</a></div></li>
-                        <li><div class="list-content"><a href="press2.jpg" target="_blank">Tulsi Park - 05/05/2025</a></div></li>
-                      </ul>
-                    </div>
-                    <div class="view-footer"><a href="landing/PressReleaseViewAll.aspx" title="Read More"><span>Read More &gt;</span></a></div>
-                  </div>
-                </div> -->
-              </div> <!-- /.resp-tabs-container -->
+              </div>
             </div>
           </div>
-        </div>
-      </div>
 
-      <!-- Tenders Section -->
-      <div class="left-col-2">
-        <h2>Tenders</h2>
-        <p class="text-slide1 pause" onclick="changeClass1()"></p>
-        <div class="scroll-text-1">
-          <ul class="list">
-            <li><div class="list-content"><a href="tender1.pdf" target="_blank">Tender notice for infrastructure at Vasudev site - 06/03/2024</a></div></li>
-          </ul>
+          <!-- Tenders Section -->
+          <div class="left-col-2">
+            <h2>Tenders</h2>
+            <p class="text-slide1 pause" onclick="changeClass1()"></p>
+            <div class="scroll-text-1">
+              <ul class="list">
+                <li><div class="list-content"><a href="tender1.pdf" target="_blank">Tender notice for infrastructure at Vasudev site - 06/03/2024</a></div></li>
+              </ul>
+            </div>
+            <div class="view-footer-tender"><a href="landing/TenderViewAll.aspx" title="View all Tenders"><span>View all Tenders &gt;</span></a></div>
+          </div>
         </div>
-        <div class="view-footer"><a href="landing/TenderViewAll.aspx" title="View all Tenders"><span>View all Tenders &gt;</span></a></div>
+
+        <!-- Right Side Links -->
+          <div class="banner-right-wrapper">
+              <div class="banner-box-wrapper">
+                        <div class="banner-box banner-box-1">
+                            <div class="banner-box-content">
+                                <h2>जन सुनवाई</h2>
+                                <a href="http://jansunwai.up.nic.in/" title="External link that opens in new tab" target="_blank" onclick="return confirm('आपको उत्तर प्रदेश की नगर पंचायत की वेबसाइट से हस्तानांतरित किया जा रहा है और अब आप किसी बाहरी वेबसाइट का कंटेंट देखेंगे')">
+                                    <p>वेब लिंक</p>
+                                    <i class="fa fa-external-link"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="banner-box banner-box-2">
+                            <div class="banner-box-content">
+                                <h2>ई-न्यूज लेटर</h2>
+                                <a href="landing/enewslatter.aspx" title="External link that opens in new tab" target="_blank">
+                                    <p>वेब लिंक</p>
+                                    <i class="fa fa-external-link"></i>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="banner-box banner-box-3">
+                            <div class="banner-box-content">
+                                <h2>डाउनलोड फार्म</h2>
+                                <a href="landing/downloadform.aspx" title="External link that opens in new tab" target="_blank">
+                                    <p>वेब लिंक</p>
+                                    <i class="fa fa-external-link"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>      
+          </div>
       </div>
     </div>
 
-    <!-- Right Side Links -->
-      <div class="banner-right-wrapper">
-          <div class="banner-box-wrapper">
-                    <div class="banner-box banner-box-1">
-                        <div class="banner-box-content">
-                            <h2>जन सुनवाई</h2>
-                            <a href="http://jansunwai.up.nic.in/" title="External link that opens in new tab" target="_blank" onclick="return confirm('आपको उत्तर प्रदेश की नगर पंचायत की वेबसाइट से हस्तानांतरित किया जा रहा है और अब आप किसी बाहरी वेबसाइट का कंटेंट देखेंगे')">
-                                <p>वेब लिंक</p>
-                                <i class="fa fa-external-link"></i>
-                            </a>
-                        </div>
+<!-- Gallery and Video Section-->
+  <div class="wrapper home-btm-slider">
+        <div class="container common-container four_content gallery-container">
+              <div class="gallery-area clearfix">
+                <div class="gallery-heading">
+                  <h3>Photo Gallery</h3>
+                    <a class="bttn-more bttn-view" href="landing/ImageGalleryViewAll.aspx" title="View all Photo Gallery"><span>View All</span></a>
+                </div>
+                <div class="gallery-holder">
+                  <div id="galleryCarousel" class="flexslider">
+                    <ul class="slides">
+                      <li data-thumb="landing/theme/images/crousal/1.jpg" data-thumb-alt="Slide 1" class="" style="width: 100%; float: left; margin-right: -100%; position: relative; opacity: 0; display: block; z-index: 1;">
+                        <img src="landing/theme/images/crousal/1.jpg" alt="gallery2" title="Slide 1" draggable="false">
+                      </li>
+                      <li data-thumb="landing/theme/images/crousal/2.jpg" data-thumb-alt="Slide 2" class="" style="width: 100%; float: left; margin-right: -100%; position: relative; opacity: 0; display: block; z-index: 1;">
+                        <img src="landing/theme/images/crousal/2.jpg" alt="gallery1" title="Slide 2" draggable="false">
+                      </li>
+                      <li data-thumb="landing/theme/images/crousal/3.jpg" data-thumb-alt="Slide 3" class="flex-active-slide" style="width: 100%; float: left; margin-right: -100%; position: relative; opacity: 1; display: block; z-index: 2;">
+                        <img src="landing/theme/images/crousal/3.jpg" alt="gallery3" title="Slide 3" draggable="false">
+                      </li>
+                    </ul>
+                    <ol class="flex-control-nav flex-control-thumbs">
+                      <li>
+                        <img src="landing/theme/images/crousal/1.jpg" alt="Slide 1" class="" draggable="false">
+                      </li>
+                      <li>
+                        <img src="landing/theme/images/crousal/2.jpg" alt="Slide 2" draggable="false" class="">
+                      </li>
+                      <li>
+                        <img src="landing/theme/images/crousal/3.jpg" alt="Slide 3" draggable="false" class="flex-active">
+                      </li>
+                    </ol>
+                    <ul class="flex-direction-nav">
+                      <li class="flex-nav-prev"><a class="flex-prev" href="#">Previous</a></li>
+                      <li class="flex-nav-next"><a class="flex-next" href="#">Next</a></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+                <div class="gallery-right">
+                  <div class="video-heading">
+                    <h3>Video Gallery</h3>
+                    <a class="bttn-more bttn-view" href="landing/YoutubeVideoViewAll.aspx" title="View all Video Gallery"><span>View All</span></a>
+                  </div>
+                    <div class="video-wrapper">
+                     <video poster="landing/theme/images/crousal/1.jpg" controls="controls" autoplay="autoplay" loop="loop" muted="muted" title="कपिलवस्तु मंदिर Bharat Bhari Mandir Siddharth Nagar" class="has-media-controls-hidden">
+                        <source src="landing/theme/videos/videohome.mp4" type="video/mp4">
+                        <span>Your browser does not support HTML5 video.</span>
+                      </video>
+                      <svg class="video-overlay-play-button" viewBox="0 0 200 200" alt="Play video">                         
+                       <circle cx="100" cy="100" r="90" fill="none" stroke-width="15" stroke="#fff"></circle>              <polygon points="70, 55 70, 145 145, 100" fill="#fff"></polygon>
+                      </svg>                    
                     </div>
-                    <div class="banner-box banner-box-2">
-                        <div class="banner-box-content">
-                            <h2>ई-न्यूज लेटर</h2>
-                            <a href="landing/enewslatter.aspx" title="External link that opens in new tab" target="_blank">
-                                <p>वेब लिंक</p>
-                                <i class="fa fa-external-link"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div class="banner-box banner-box-3">
-                        <div class="banner-box-content">
-                            <h2>डाउनलोड फार्म</h2>
-                            <a href="landing/downloadform.aspx" title="External link that opens in new tab" target="_blank">
-                                <p>वेब लिंक</p>
-                                <i class="fa fa-external-link"></i>
-                            </a>
-                        </div>
-                    </div>
-                </div>      
-      </div>
+                </div>
+        </div>
   </div>
-</div>
 
 </section>
 </body>
