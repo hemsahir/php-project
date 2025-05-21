@@ -1,5 +1,45 @@
+<?php
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+include 'config/db.php';
+include 'language_switch.php';
+
+$lang = $_SESSION['lang'] ?? 'en';
+
+$online_labels = [
+    'en' => [
+        'heading' => 'Online Services',
+        'services' => [
+            'property_water' => ['title' => 'Property & Water Tax', 'icon' => 'fa-home'],
+            'birth_death' => ['title' => 'Birth & Death Registration', 'confirm' => 'You will be redirected to an external website', 'icon' => 'fa-users'],
+            'license' => ['title' => 'License', 'icon' => 'fa-credit-card'],
+            'advertisement' => ['title' => 'Advertisement Tax', 'icon' => 'fa-newspaper-o'],
+            'mutation' => ['title' => 'Mutation', 'confirm' => 'You will be redirected to an external website', 'icon' => 'fa-slideshare'],
+            'complaint' => ['title' => 'Complaint', 'icon' => 'fa-pencil-square-o'],
+        ]
+    ],
+    'hi' => [
+        'heading' => 'ऑनलाइन सेवाएं',
+        'services' => [
+            'property_water' => ['title' => 'सम्पत्ति एवं जल कर', 'icon' => 'fa-home'],
+            'birth_death' => ['title' => 'जन्म एवं मृत्यु पंजीकरण', 'confirm' => 'आपको बाहरी वेबसाइट पर भेजा जाएगा', 'icon' => 'fa-users'],
+            'license' => ['title' => 'लाइसेन्स', 'icon' => 'fa-credit-card'],
+            'advertisement' => ['title' => 'विज्ञापन कर', 'icon' => 'fa-newspaper-o'],
+            'mutation' => ['title' => 'म्युटेशन', 'confirm' => 'आपको बाहरी वेबसाइट पर भेजा जाएगा', 'icon' => 'fa-slideshare'],
+            'complaint' => ['title' => 'शिकायत', 'icon' => 'fa-pencil-square-o'],
+        ]
+    ]
+];
+
+// Fetch What's New
+$whatsNew = $conn->query("SELECT title, notice_date, file_path FROM whats_new ORDER BY notice_date DESC LIMIT 10");
+// Fetch Press Release
+$pressRelease = $conn->query("SELECT title, notice_date, file_path FROM press_releases ORDER BY notice_date DESC LIMIT 10");
+// Fetch Tenders (Optional)
+$tenders = $conn->query("SELECT title, notice_date, file_path FROM tenders ORDER BY notice_date DESC LIMIT 10");
+?>
 <!DOCTYPE html>
-<html>
+<html lang="<?= $lang ?>">
 <head>
   <meta charset="UTF-8">
   <title>नगर पालिका परिषद, शिकारपुर, बुलन्दशहर</title>
@@ -11,7 +51,9 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <link rel="stylesheet" href="assets/css/font-awesome.min.css">
   <link rel="stylesheet" href="assets/css/style.css">
+  <link rel="stylesheet" href="assets/css/flexslider.css">
   <link rel="stylesheet" href="assets/css/body-section.css">
+  <script src="assets/js/jquery.flexslider.js" defer></script>
   <script src="assets/js/body-section.js" defer></script>
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 </head>
@@ -34,7 +76,7 @@
               तारीखे-अमरोहा नामक ऐतिहासिक पुस्तक में यह उल्लखित है कि अमरोहा में 676 से 1148 ईस्वी तक राजपूत वंश का शासन था। बहराम शाह (1240-42) ने मलिक जलालुद्दीन को अमरोहा के हकीम के पद पर नियुक्त किया। प्राचीन समय में पांचाल प्रदेश के शासकों को, जिसका इस क्षेत्र पर प्रभाव था हस्तिनापुर के कुरु राजाओं द्वारा हटा दिया गया। कुषाण एवं नंद साम्राज्य के पतन के बाद इस क्षेत्र पर मौर्य वंश का भी शासन रहा तत्पश्चात समुद्रगुप्त का शासन स्थापित हुआ। लगभग दो शताब्दियों तक गुप्त वंश का शासन इस क्षेत्र पर रहा। गुप्त साम्राज्य के पतन के बाद कन्नौज के राजा मुखारी का नियंत्रण इस क्षेत्र पर हो गया इसके पश्चात् 606 से 647 ईस्वी तक यह कन्नौज नरेश हर्ष के शासन क्षेत्र में रहा। हर्ष की मृत्यु के पश्चात जनपद का उत्तरी क्षेत्र तोमर वंश के साम्राज्य क्षेत्र में रहा। पृथ्वी राज चौहान की शाहबुद्दीन गौरी के हाथों हार के पश्चात् मुस्लिम प्रभुत्व बढ़ना प्रारम्भ हुआ एवं अन्ततः राजपूत वंश के कठेरिया, बड़गूजर, गौड़, तोमर एवं अन्य क्षेत्रीय वंश सयुंक्त रूप से विदेशी मुस्लिम आक्रमणकारियों के ख़िलाफ़ खड़े हुए। 
             </p>
             <div class="view-footer">
-              <a href="landing/aboutus.aspx" title="Read More"><span>Read More &gt;</span></a>
+              <a href="#" title="Read More"><span>Read More &gt;</span></a>
             </div>
           </div>
         </div>
@@ -45,11 +87,11 @@
             <div class="minister-box row">
               <?php
               $ministers = [
-                ["img" => "cmup.jpg", "name" => "माननीय श्री योगी आदित्यनाथ जी", "role" => "(मुख्यमंत्री)"],
+                ["img" => "cmup.png", "name" => "माननीय श्री योगी आदित्यनाथ जी", "role" => "(मुख्यमंत्री)"],
                 ["img" => "nagarvikash.jpg", "name" => "माननीय श्री ऐ. के. शर्मा", "role" => "(नगर विकास मंत्री)"],
-                ["img" => "dm.jpg", "name" => "श्रीमती निधि गुप्ता वत्स, आईएएस", "role" => "(ज़िलाधिकारी)"],
-                ["img" => "chrmn.jpeg", "name" => "श्रीमती शशि जैन", "role" => "(अध्यक्ष)"],
-                ["img" => "adhishashi.jpeg", "name" => "डॉ० बृजेश कुमार", "role" => "(अधिशासी अधिकारी)"],
+                ["img" => "dm.jpeg", "name" => "श्रीमती निधि गुप्ता वत्स, आईएएस", "role" => "(ज़िलाधिकारी)"],
+                ["img" => "President.jpg", "name" => "श्रीमती राजबाला देवी", "role" => "(अध्यक्ष)"],
+                // ["img" => "adhishashi.jpeg", "name" => "डॉ० बृजेश कुमार", "role" => "(अधिशासी अधिकारी)"],
               ];
                 foreach ($ministers as $minister) {
                     echo '<div class="col-6 mb-3">
@@ -74,58 +116,60 @@
     </div>
   </div>
 
-<!-- online seva section -->
-    <div class="online-services-section wrapper">
-        <div class="container common-container four_content banner-container body-container top-body-container"> 
-            <section id="page-head" class="wrapper headings-wrapper text-center">
-            <h2>ऑनलाइन सेवाएं</h2>
+  <!-- online seva section -->
+   <section class="online-services-section wrapper">
+    <div class="container common-container four_content banner-container body-container top-body-container"> 
+        <section id="page-head" class="wrapper headings-wrapper text-center">
+            <h2><?= $online_labels[$lang]['heading'] ?></h2>
             <hr>
-            </section>
-            <!-- Row 1 -->
-            <div class="banner-row">
+        </section>
+        <div class="banner-row">
             <div class="banner-box-middle" style="background: #a6690c;">
-                <a href="../IndexUser.aspx" target="_blank" title="सम्पत्ति एवं जल कर">
-                <h2>सम्पत्ति एवं जल कर</h2>
-                <i class="fa fa-home fa-4x"></i>
+                <a href="#" target="_blank" title="<?= $online_labels[$lang]['services']['property_water']['title'] ?>">
+                    <h2><?= $online_labels[$lang]['services']['property_water']['title'] ?></h2>
+                    <i class="fa <?= $online_labels[$lang]['services']['property_water']['icon'] ?> fa-4x"></i>
                 </a>
             </div>
             <div class="banner-box-middle" style="background: #619303;">
-                <a href="https://crsorgi.gov.in/web/index.php/auth/login" target="_blank" title="जन्म एवं मृत्यु पंजीकरण" onclick="return confirm('आपको बाहरी वेबसाइट पर भेजा जाएगा')">
-                <h2>जन्म एवं मृत्यु पंजीकरण</h2>
-                <i class="fa fa-users fa-4x"></i>
+                <a href="https://crsorgi.gov.in/web/index.php/auth/login" target="_blank"
+                   title="<?= $online_labels[$lang]['services']['birth_death']['title'] ?>"
+                   onclick="return confirm('<?= $online_labels[$lang]['services']['birth_death']['confirm'] ?>')">
+                    <h2><?= $online_labels[$lang]['services']['birth_death']['title'] ?></h2>
+                    <i class="fa <?= $online_labels[$lang]['services']['birth_death']['icon'] ?> fa-4x"></i>
                 </a>
             </div>
             <div class="banner-box-middle" style="background: #910ebe;">
-                <a href="../Index.aspx" target="_blank" title="लाइसेन्स">
-                <h2>लाइसेन्स</h2>
-                <i class="fa fa-credit-card fa-4x"></i>
+                <a href="#" target="_blank" title="<?= $online_labels[$lang]['services']['license']['title'] ?>">
+                    <h2><?= $online_labels[$lang]['services']['license']['title'] ?></h2>
+                    <i class="fa <?= $online_labels[$lang]['services']['license']['icon'] ?> fa-4x"></i>
                 </a>
             </div>
-            </div>
-            <!-- Row 2 -->
-            <div class="banner-row">
-             <div class="banner-box-middle" style="background: #0026ff;">
-                <a href="../Index.aspx" target="_blank" title="विज्ञापन कर">
-                <h2>विज्ञापन कर</h2>
-                <i class="fa fa-newspaper-o fa-4x"></i>
+        </div>
+        <div class="banner-row">
+            <div class="banner-box-middle" style="background: #0026ff;">
+                <a href="#" target="_blank" title="<?= $online_labels[$lang]['services']['advertisement']['title'] ?>">
+                    <h2><?= $online_labels[$lang]['services']['advertisement']['title'] ?></h2>
+                    <i class="fa <?= $online_labels[$lang]['services']['advertisement']['icon'] ?> fa-4x"></i>
                 </a>
             </div>
             <div class="banner-box-middle" style="background: #8b940d;">
-                <a href="http://e-nagarsewaup.gov.in/ulbapps/OnlineUser/onlineMutationOption.action" target="_blank" title="म्युटेशन" onclick="return confirm('आपको बाहरी वेबसाइट पर भेजा जाएगा')">
-                <h2>म्युटेशन</h2>
-                <i class="fa fa-slideshare fa-4x"></i>
+                <a href="http://e-nagarsewaup.gov.in/ulbapps/OnlineUser/onlineMutationOption.action" target="_blank"
+                   title="<?= $online_labels[$lang]['services']['mutation']['title'] ?>"
+                   onclick="return confirm('<?= $online_labels[$lang]['services']['mutation']['confirm'] ?>')">
+                    <h2><?= $online_labels[$lang]['services']['mutation']['title'] ?></h2>
+                    <i class="fa <?= $online_labels[$lang]['services']['mutation']['icon'] ?> fa-4x"></i>
                 </a>
             </div>
             <div class="banner-box-middle" style="background: #a6690c;">
-                <a href="../Index.aspx" target="_blank" title="शिकायत">
-                <h2>शिकायत</h2>
-                <i class="fa fa-pencil-square-o fa-4x"></i>
+                <a href="complaint.php" title="<?= $online_labels[$lang]['services']['complaint']['title'] ?>">
+                    <h2><?= $online_labels[$lang]['services']['complaint']['title'] ?></h2>
+                    <i class="fa <?= $online_labels[$lang]['services']['complaint']['icon'] ?> fa-4x"></i>
                 </a>
             </div>
-            </div>
-            <hr>
         </div>
+        <hr>
     </div>
+</section>
 
 
 <!-- Tender & What's New Section -->
@@ -147,12 +191,22 @@
                         <p class="text-slide pause" onclick="changeClass()"></p>
                         <div class="scroll-text">
                           <ul class="list">
-                            <li><div class="list-content"><a href="sample1.pdf" target="_blank">Public notice regarding mock drill on 07 May 2025</a></div></li>
-                            <li><div class="list-content"><a href="sample2.jpg" target="_blank">#OperationSindoor Jai Hind!</a></div></li>
-                            <li><div class="list-content"><a href="sample3.jpg" target="_blank">Vasudev Temple - 05/05/2025</a></div></li>
+                            <?php while ($row = $whatsNew->fetch_assoc()): ?>
+                              <li>
+                                <div class="list-content">
+                                  <?php if (!empty($row['file_path']) && file_exists($row['file_path'])): ?>
+                                    <a href="<?= htmlspecialchars($row['file_path']) ?>" target="_blank">
+                                      <?= htmlspecialchars($row['title']) ?> - <?= date("d/m/Y", strtotime($row['notice_date'])) ?>
+                                    </a>
+                                  <?php else: ?>
+                                    <?= htmlspecialchars($row['title']) ?> - <?= date("d/m/Y", strtotime($row['notice_date'])) ?>
+                                  <?php endif; ?>
+                                </div>
+                              </li>
+                            <?php endwhile; ?>
                           </ul>
                         </div>
-                        <div class="view-footer-tender"><a href="landing/WhatsNewViewAll.aspx" title="Read More"><span>Read More &gt;</span></a></div>
+                        <div class="view-footer-tender"><a href="whats_new_view_all.php" title="Read More"><span>Read More &gt;</span></a></div>
                       </div>
                     </div>
 
@@ -162,11 +216,22 @@
                         <p class="text-slide01 pause" onclick="changeClass01()"></p>
                         <div class="scroll-text01">
                           <ul class="list">
-                            <li><div class="list-content"><a href="press1.pdf" target="_blank">Press release on mock drill 07/05/2025</a></div></li>
-                            <li><div class="list-content"><a href="press2.jpg" target="_blank">Tulsi Park - 05/05/2025</a></div></li>
+                            <?php while ($row = $pressRelease->fetch_assoc()): ?>
+                              <li>
+                                <div class="list-content">
+                                  <?php if (!empty($row['file_path']) && file_exists($row['file_path'])): ?>
+                                    <a href="<?= htmlspecialchars($row['file_path']) ?>" target="_blank">
+                                      <?= htmlspecialchars($row['title']) ?> - <?= date("d/m/Y", strtotime($row['notice_date'])) ?>
+                                    </a>
+                                  <?php else: ?>
+                                    <?= htmlspecialchars($row['title']) ?> - <?= date("d/m/Y", strtotime($row['notice_date'])) ?>
+                                  <?php endif; ?>
+                                </div>
+                              </li>
+                            <?php endwhile; ?>
                           </ul>
                         </div>
-                        <div class="view-footer-tender"><a href="landing/PressReleaseViewAll.aspx" title="Read More"><span>Read More &gt;</span></a></div>
+                        <div class="view-footer-tender"><a href="view_all_press.php" title="Read More"><span>Read More &gt;</span></a></div>
                       </div>
                     </div>
                   </div> 
@@ -181,10 +246,22 @@
             <p class="text-slide1 pause" onclick="changeClass1()"></p>
             <div class="scroll-text-1">
               <ul class="list">
-                <li><div class="list-content"><a href="tender1.pdf" target="_blank">Tender notice for infrastructure at Vasudev site - 06/03/2024</a></div></li>
+                <?php while ($row = $tenders->fetch_assoc()): ?>
+                  <li>
+                    <div class="list-content">
+                      <?php if (!empty($row['file_path']) && file_exists($row['file_path'])): ?>
+                        <a href="<?= htmlspecialchars($row['file_path']) ?>" target="_blank">
+                          <?= htmlspecialchars($row['title']) ?> - <?= date("d/m/Y", strtotime($row['notice_date'])) ?>
+                        </a>
+                      <?php else: ?>
+                        <?= htmlspecialchars($row['title']) ?> - <?= date("d/m/Y", strtotime($row['notice_date'])) ?>
+                      <?php endif; ?>
+                    </div>
+                  </li>
+                <?php endwhile; ?>
               </ul>
             </div>
-            <div class="view-footer-tender"><a href="landing/TenderViewAll.aspx" title="View all Tenders"><span>View all Tenders &gt;</span></a></div>
+            <div class="view-footer-tender"><a href="view_all_tenders.php" title="View all Tenders"><span>View all Tenders &gt;</span></a></div>
           </div>
         </div>
 
@@ -229,32 +306,21 @@
               <div class="gallery-area clearfix">
                 <div class="gallery-heading">
                   <h3>Photo Gallery</h3>
-                    <a class="bttn-more bttn-view" href="landing/ImageGalleryViewAll.aspx" title="View all Photo Gallery"><span>View All</span></a>
+                    <a class="bttn-more bttn-view" href="#" title="View all Photo Gallery"><span>View All</span></a>
                 </div>
                 <div class="gallery-holder">
                   <div id="galleryCarousel" class="flexslider">
                     <ul class="slides">
-                      <li data-thumb="landing/theme/images/crousal/1.jpg" data-thumb-alt="Slide 1" class="" style="width: 100%; float: left; margin-right: -100%; position: relative; opacity: 0; display: block; z-index: 1;">
-                        <img src="landing/theme/images/crousal/1.jpg" alt="gallery2" title="Slide 1" draggable="false">
+                      <li data-thumb="assets/uploads/carousel/1.jpg" data-thumb-alt="Slide 1" class="" style="width: 100%; float: left; margin-right: -100%; position: relative; opacity: 0; display: block; z-index: 1;">
+                        <img src="assets/uploads/carousel/1.jpg" alt="gallery2" title="Slide 1" draggable="false">
                       </li>
-                      <li data-thumb="landing/theme/images/crousal/2.jpg" data-thumb-alt="Slide 2" class="" style="width: 100%; float: left; margin-right: -100%; position: relative; opacity: 0; display: block; z-index: 1;">
-                        <img src="landing/theme/images/crousal/2.jpg" alt="gallery1" title="Slide 2" draggable="false">
+                      <li data-thumb="assets/uploads/carousel/2.jpg" data-thumb-alt="Slide 2" class="" style="width: 100%; float: left; margin-right: -100%; position: relative; opacity: 0; display: block; z-index: 1;">
+                        <img src="assets/uploads/carousel/2.jpg" alt="gallery1" title="Slide 2" draggable="false">
                       </li>
-                      <li data-thumb="landing/theme/images/crousal/3.jpg" data-thumb-alt="Slide 3" class="flex-active-slide" style="width: 100%; float: left; margin-right: -100%; position: relative; opacity: 1; display: block; z-index: 2;">
-                        <img src="landing/theme/images/crousal/3.jpg" alt="gallery3" title="Slide 3" draggable="false">
+                      <li data-thumb="assets/uploads/carousel/3.jpg" data-thumb-alt="Slide 3" class="flex-active-slide" style="width: 100%; float: left; margin-right: -100%; position: relative; opacity: 1; display: block; z-index: 2;">
+                        <img src="assets/uploads/carousel/3.jpg" alt="gallery3" title="Slide 3" draggable="false">
                       </li>
                     </ul>
-                    <ol class="flex-control-nav flex-control-thumbs">
-                      <li>
-                        <img src="landing/theme/images/crousal/1.jpg" alt="Slide 1" class="" draggable="false">
-                      </li>
-                      <li>
-                        <img src="landing/theme/images/crousal/2.jpg" alt="Slide 2" draggable="false" class="">
-                      </li>
-                      <li>
-                        <img src="landing/theme/images/crousal/3.jpg" alt="Slide 3" draggable="false" class="flex-active">
-                      </li>
-                    </ol>
                     <ul class="flex-direction-nav">
                       <li class="flex-nav-prev"><a class="flex-prev" href="#">Previous</a></li>
                       <li class="flex-nav-next"><a class="flex-next" href="#">Next</a></li>
@@ -265,11 +331,11 @@
                 <div class="gallery-right">
                   <div class="video-heading">
                     <h3>Video Gallery</h3>
-                    <a class="bttn-more bttn-view" href="landing/YoutubeVideoViewAll.aspx" title="View all Video Gallery"><span>View All</span></a>
+                    <a class="bttn-more bttn-view" href="#" title="View all Video Gallery"><span>View All</span></a>
                   </div>
                     <div class="video-wrapper">
-                     <video poster="landing/theme/images/crousal/1.jpg" controls="controls" autoplay="autoplay" loop="loop" muted="muted" title="कपिलवस्तु मंदिर Bharat Bhari Mandir Siddharth Nagar" class="has-media-controls-hidden">
-                        <source src="landing/theme/videos/videohome.mp4" type="video/mp4">
+                     <video poster="assets/uploads/carousel/1.jpg" controls="controls" autoplay="autoplay" loop="loop" muted="muted" title="कपिलवस्तु मंदिर Bharat Bhari Mandir Siddharth Nagar" class="has-media-controls-hidden">
+                        <source src="assets/videos/videohome.mp4" type="video/mp4">
                         <span>Your browser does not support HTML5 video.</span>
                       </video>
                       <svg class="video-overlay-play-button" viewBox="0 0 200 200" alt="Play video">                         

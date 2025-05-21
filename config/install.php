@@ -40,6 +40,57 @@ $conn->query("CREATE TABLE IF NOT EXISTS sliders (
   image VARCHAR(255) NOT NULL
 )");
 
+$conn->query("CREATE TABLE IF NOT EXISTS whats_new (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    notice_date DATE,
+    description TEXT,
+    file_path VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
+$conn->query("CREATE TABLE IF NOT EXISTS press_releases (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    notice_date DATE,
+    description TEXT,
+    file_path VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
+$conn->query("CREATE TABLE IF NOT EXISTS tenders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    title VARCHAR(255),
+    notice_date DATE,
+    description TEXT,
+    file_path VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
+$conn->query("CREATE TABLE IF NOT EXISTS complaints (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(100),
+    phone VARCHAR(20),
+    subject VARCHAR(255),
+    message TEXT,
+    status ENUM('Pending', 'In Progress', 'Complete') DEFAULT 'Pending',
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+)");
+
+$conn->query("CREATE TABLE IF NOT EXISTS photo_gallery (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    image_path VARCHAR(255),
+    is_homepage BOOLEAN DEFAULT FALSE,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
+$conn->query("CREATE TABLE IF NOT EXISTS video_gallery (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    video_path VARCHAR(255),
+    is_homepage BOOLEAN DEFAULT FALSE,
+    uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
 
 echo "✅ Installation complete. Tables created.<br>";
 echo "<a href='../admin/login.php'>Go to Admin Panel</a>";

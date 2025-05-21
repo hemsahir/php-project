@@ -21,9 +21,15 @@ if (isset($_POST['upload_slider'])) {
     $image_extension = strtolower(pathinfo($image, PATHINFO_EXTENSION));
 
     if (!in_array($image_extension, $allowed_extensions)) {
-        echo "❌ Invalid file type. Only JPG, JPEG, PNG files are allowed.";
+        $_SESSION['msgType'] = "error";
+        $_SESSION['msg'] = "❌ Invalid file type. Only JPG, JPEG, PNG files are allowed.";
+        header("Location: manage_slider.php");
+        exit;
     } elseif ($image_size > $max_size) {
-        echo "❌ File size exceeds 5MB limit.";
+        $_SESSION['msgType'] = "error";
+        $_SESSION['msg'] = "❌ File size exceeds 5MB limit.";
+        header("Location: manage_slider.php");
+        exit;
     } else {
         // Check how many images already exist in the slider
         $result = $conn->query("SELECT COUNT(*) as image_count FROM sliders");
@@ -34,12 +40,21 @@ if (isset($_POST['upload_slider'])) {
             if (move_uploaded_file($image_tmp, $target_file)) {
                 $slider_path = "assets/uploads/" . basename($_FILES["slider_image"]["name"]);
                 $conn->query("INSERT INTO sliders (image) VALUES ('$slider_path')");
-                echo "✅ Slider image uploaded successfully!";
+                $_SESSION['msgType'] = "success";
+                $_SESSION['msg'] = "✅ Slider image uploaded successfully!";
+                header("Location: manage_slider.php");
+                exit;
             } else {
-                echo "❌ Error uploading the slider image.";
+                $_SESSION['msgType'] = "error";
+                $_SESSION['msg'] = "❌ Error uploading the slider image.";
+                header("Location: manage_slider.php");
+                exit;
             }
         } else {
-            echo "❌ You can only upload a maximum of 5 slider images.";
+            $_SESSION['msgType'] = "error";
+            $_SESSION['msg'] = "❌ You can only upload a maximum of 5 slider images.";
+            header("Location: manage_slider.php");
+            exit;
         }
     }
 }
@@ -52,7 +67,10 @@ if (isset($_GET['delete_slider'])) {
     if (isset($slider['image'])) {
         unlink("../" . $slider['image']); // Delete the image file
         $conn->query("DELETE FROM sliders WHERE id=$image_id");
-        echo "✅ Slider image deleted successfully!";
+        $_SESSION['msgType'] = "success";
+        $_SESSION['msg'] = "✅ Slider image deleted successfully!";
+        header("Location: manage_slider.php");
+        exit;
     }
 }
 
@@ -66,6 +84,7 @@ $sliders_result = $conn->query("SELECT * FROM sliders");
     <meta charset="UTF-8">
     <title>Manage Slider</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container mt-5">
@@ -84,10 +103,25 @@ $sliders_result = $conn->query("SELECT * FROM sliders");
             <?php while ($slider = $sliders_result->fetch_assoc()) { ?>
                 <div class="col-md-3 mb-4">
                     <img src="../<?php echo $slider['image']; ?>" class="img-fluid" alt="Slider Image">
-                    <a href="?delete_slider=<?php echo $slider['id']; ?>" class="btn btn-danger btn-sm mt-2">Delete</a>
+                    <a href="?delete_slider=<?php echo $slider['id']; ?>" class="btn btn-danger btn-sm mt-2" onclick="return confirm('Delete this image?')">Delete</a>
                 </div>
             <?php } ?>
         </div>
     </div>
+<script>
+    <?php if (isset($_SESSION['msg'])): ?>
+        Swal.fire({
+            icon: '<?= $_SESSION['msgType'] ?>',
+            title: '<?= ucfirst($_SESSION['msgType']) ?>',
+            text: '<?= $_SESSION['msg'] ?>',
+            confirmButtonColor: '#3085d6'
+        });
+    <?php
+    // clear message after showing
+        unset($_SESSION['msg']);
+        unset($_SESSION['msgType']);
+        endif;
+    ?>
+</script>
 </body>
 </html>

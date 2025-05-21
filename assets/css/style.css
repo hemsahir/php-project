@@ -460,8 +460,13 @@ p.banner-content {
   background-image: url(../uploads/minister/profile-bg.jpg);
   background-size: cover;
   border-radius: 8px;
-  max-width: 100%;
+  /* max-width: 100%; */
   height: auto;
+  width: 100%;
+  max-height: 180px; /* Fixed max height */
+  /* object-fit: cover; */
+  display: block;
+  margin: 0 auto;
 }
 .minister-box {
   padding: 0px;
@@ -568,3 +573,58 @@ p.banner-content {
   }
 }
 
+.breadcam-bg {
+    background-color: #4e2e2e14;
+    border-bottom: 1px solid #ddd;
+}
+.breadcam {
+    padding: 8px 0;
+    display: block; 
+}
+.inner-wrapper .container {
+    margin: 0 auto;
+    padding: 0px 15px;
+    z-index: 0;
+}
+.breadcam li {
+    list-style-type: none;
+    display: inline-block;
+    font-size: 16px;
+    white-space: nowrap;
+    color: #666666;
+}
+.breadcam li a {
+    display: inline;
+    padding-right: 13px;
+    color: #000;
+    text-decoration: none;
+}
+.breadcam ul.breadcrumb {
+    margin: 0;
+    padding: 0;
+}
+
+.breadcam li + li::before {
+    content: " > ";
+    padding: 0 5px;
+    color: #999;
+}
+
+.breadcam li a:hover {
+    text-decoration: underline;
+}
+
+.list-wrapper h2 {
+  font-size: 150%;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  font-weight: 700;
+  clear: both;
+}
+
+.list-wrapper h3 {
+  font-size: 150%;
+  padding-top: 0px;
+  padding-bottom: 0px;
+  clear: both;
+}

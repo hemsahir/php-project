@@ -55,3 +55,39 @@ function changeClass1() {
     icon.classList.toggle('play');
     list.classList.toggle('scroll-paused');
 }
+
+$(window).on('load', function () {
+ $('#galleryCarousel').flexslider({
+        animation: "fade",
+        controlNav: "thumbnails",
+        start: function(slider){
+          $('body').removeClass('loading');
+        }
+      });
+});
+
+document.addEventListener("DOMContentLoaded", function () {
+  const video = document.querySelector(".video-wrapper video");
+  const overlayBtn = document.querySelector(".video-overlay-play-button");
+
+  if (video && overlayBtn) {
+    overlayBtn.addEventListener("click", function () {
+      if (video.paused) {
+        video.play();
+        overlayBtn.style.display = "none";
+      } else {
+        video.pause();
+        overlayBtn.style.display = "block";
+      }
+    });
+
+    // Optional: Show overlay again when video ends or paused manually
+    video.addEventListener("pause", function () {
+      overlayBtn.style.display = "block";
+    });
+
+    video.addEventListener("play", function () {
+      overlayBtn.style.display = "none";
+    });
+  }
+});

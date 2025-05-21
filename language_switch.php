@@ -1,6 +1,7 @@
 <?php
-session_start();
-if (isset($_GET['lang'])) {
-    $_SESSION['lang'] = $_GET['lang'];
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-$lang = $_SESSION['lang'] ?? 'hi'; // default to Hindi
+
+$lang = $_GET['lang'] ?? $_SESSION['lang'] ?? 'hi';
+$_SESSION['lang'] = $lang;

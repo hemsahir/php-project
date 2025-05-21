@@ -20,6 +20,7 @@ $logo = 'assets/uploads/default_logo.png';
     <title>Admin Profile</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <style>
         /* Sidebar Styles */
         .sidebar {
@@ -65,7 +66,28 @@ $logo = 'assets/uploads/default_logo.png';
     <a href="dashboard.php" class="<?php echo ($active_tab == 'dashboard') ? 'active' : ''; ?>">Dashboard</a>
     <a href="manage_slider.php" class="<?php echo ($active_tab == 'manage_slider') ? 'active' : ''; ?>">Manage Slider</a>
     <a href="manage_pages.php" class="<?php echo ($active_tab == 'manage_pages') ? 'active' : ''; ?>">Manage Pages</a>
-    <a href="contact_us.php" class="<?php echo ($active_tab == 'contact_us') ? 'active' : ''; ?>">Contact Us</a>
+    <!-- Updates & Notices Menu -->
+    <div class="dropdown">
+        <a href="#" class="dropdown-toggle d-block text-white py-2" data-bs-toggle="collapse" data-bs-target="#updatesMenu" aria-expanded="false">
+            Updates & Notices
+        </a>
+        <div id="updatesMenu" class="collapse ps-3">
+            <a href="whats_new.php" class="<?php echo ($active_tab == 'whats_new') ? 'active' : ''; ?>">What's New</a>
+            <a href="press_release.php" class="<?php echo ($active_tab == 'press_release') ? 'active' : ''; ?>">Press Release</a>
+            <a href="tenders.php" class="<?php echo ($active_tab == 'tenders') ? 'active' : ''; ?>">Tenders</a>
+        </div>
+    </div>
+    <!-- Manage Gallery Menu -->
+    <div class="dropdown">
+        <a href="#" class="dropdown-toggle d-block text-white py-2" data-bs-toggle="collapse" data-bs-target="#galleryMenu" aria-expanded="false">
+            Manage Gallery
+        </a>
+        <div id="galleryMenu" class="collapse ps-3">
+            <a href="photo_gallery.php" class="<?php echo ($active_tab == 'photo_gallery') ? 'active' : ''; ?>">Photo Gallery</a>
+            <a href="video_gallery.php" class="<?php echo ($active_tab == 'video_gallery') ? 'active' : ''; ?>">Video Gallery</a>
+        </div>
+    </div>
+    <a href="complaints.php" class="<?php echo ($active_tab == 'complaints') ? 'active' : ''; ?>">Complaint Management</a>
     <a href="profile.php" class="<?php echo ($active_tab == 'profile') ? 'active' : ''; ?>">Profile</a>
     <a href="logout.php" class="logout-btn">
         <i class="bi bi-box-arrow-right"></i> Logout

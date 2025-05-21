@@ -8,7 +8,6 @@ if (!isset($_SESSION['admin'])) {
     exit();
 }
 
-$msg = ''; $msgType = 'success';
 // Handle Add or Edit Main Page
 if (isset($_POST['save_main_page'])) {
     $title_en = $_POST['title_en'];
@@ -18,57 +17,53 @@ if (isset($_POST['save_main_page'])) {
 
     if ($id > 0) {
         $conn->query("UPDATE pages SET title_en='$title_en', title_hi='$title_hi', sort_order=$sort_order WHERE id=$id");
-        $msg = "✅ Main page updated.";
+        $_SESSION['msgType'] = "success";
+        $_SESSION['msg'] = "✅ Main page updated.";
+        header("Location: manage_pages.php");
+        exit;
     } else {
         $check = $conn->query("SELECT * FROM pages WHERE sort_order = $sort_order");
         if ($check->num_rows > 0) {
-            $msg = "❌ Sort order already in use.";
-            $msgType = 'error';
+            $_SESSION['msgType'] = "error";
+            $_SESSION['msg'] = "❌ Sort order already in use.";
+            header("Location: manage_pages.php");
+            exit;
         } else {
             $conn->query("INSERT INTO pages (title_en, title_hi, sort_order) VALUES ('$title_en', '$title_hi', $sort_order)");
-            $msg = "✅ Main page added.";
+            $_SESSION['msgType'] = "success";
+            $_SESSION['msg'] = "✅ Main page added.";
+            header("Location: manage_pages.php");
+            exit;
         }
     }
-}
-
-// Handle Edit Sub-page
-if (isset($_POST['save_sub_page'])) {
-    $id = intval($_POST['sub_id']);
-    $title_en = $_POST['sub_title_en'];
-    $title_hi = $_POST['sub_title_hi'];
-    $content_en = $_POST['sub_content_en'];
-    $content_hi = $_POST['sub_content_hi'];
-    $conn->query("UPDATE sub_pages SET title_en='$title_en', title_hi='$title_hi', content_en='$content_en', content_hi='$content_hi' WHERE id=$id");
-    $msg = "✅ Sub-page updated.";
 }
 
 // Add Sub Pages
 if (isset($_POST['add_sub_page']) && isset($_POST['sub_title_en']) && is_array($_POST['sub_title_en'])) {
     $parent_id = intval($_POST['parent_page_id']);
+    $valid = false;
     foreach ($_POST['sub_title_en'] as $i => $title_en) {
         $title_en = mysqli_real_escape_string($conn, $title_en);
         $title_hi = mysqli_real_escape_string($conn, $_POST['sub_title_hi'][$i]);
         $content_en = mysqli_real_escape_string($conn, $_POST['sub_content_en'][$i]);
         $content_hi = mysqli_real_escape_string($conn, $_POST['sub_content_hi'][$i]);
+
+        if ((!$title_en && !$title_hi) || (!$content_en && !$content_hi)) {
+            continue; // Skip invalid entries
+        }
+        $valid = true;
         $conn->query("INSERT INTO sub_pages (page_id, title_en, title_hi, content_en, content_hi)
                     VALUES ('$parent_id', '$title_en', '$title_hi', '$content_en', '$content_hi')");
     }
-    $msg = "✅ Sub-pages added.";
-}
-
-// Delete Sub Page
-if (isset($_GET['delete_sub'])) {
-    $id = intval($_GET['delete_sub']);
-    $conn->query("DELETE FROM sub_pages WHERE id = $id");
-    $msg = "🗑️ Sub-page deleted.";
-}
-
-// Delete Main Page
-if (isset($_GET['delete_main'])) {
-    $id = intval($_GET['delete_main']);
-    $conn->query("DELETE FROM sub_pages WHERE page_id = $id");
-    $conn->query("DELETE FROM pages WHERE id = $id");
-    $msg = "🗑️ Main page and sub-pages deleted.";
+    if ($valid) {
+        $_SESSION['msgType'] = "success";
+        $_SESSION['msg'] = "✅ Sub-pages added.";
+    } else {
+        $_SESSION['msgType'] = "error";
+        $_SESSION['msg'] = "❌ No valid sub-pages to add.";
+    }
+    header("Location: manage_pages.php");
+    exit;
 }
 
 $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
@@ -80,20 +75,9 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
     <title>Manage Pages</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script src="../assets/js/tinymce/tinymce.min.js"></script>
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        tinymce.init({
-            selector: 'textarea.wysiwyg',
-            menubar: false
-        });
-    });
-</script>
-
-
-
     <style>
         .accordion-button {
             background-color: #f8f9fa;
@@ -140,10 +124,9 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
                                 onclick="editMainPage(<?= $page['id'] ?>, '<?= $page['title_en'] ?>', '<?= $page['title_hi'] ?>', <?= $page['sort_order'] ?>)">
                                 <i class="bi bi-pencil-square"></i>
                             </button>
-                            <a href="?delete_main=<?= $page['id'] ?>" class="btn btn-sm btn-outline-danger"
-                                onclick="return confirm('Delete this main page and its sub-pages?')">
+                            <button onclick="deleteMainPage(<?= $page['id'] ?>,event)" class="btn btn-sm btn-outline-danger">
                                 <i class="bi bi-trash-fill"></i>
-                            </a>
+                            </button>
                         </div>
                         <button class="accordion-button collapsed flex-grow-1 ms-2" type="button"
                             data-bs-toggle="collapse" data-bs-target="#collapse<?= $page['id'] ?>"
@@ -161,23 +144,43 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
                             <div class="border-top pt-3">
                                 <h5>Existing Sub-pages</h5>
                                 <?php while ($sub = $sub_pages->fetch_assoc()) { ?>
-                                    <div class="border p-2 mb-2 position-relative">
+                                    <!-- Each Sub-Page Display -->
+                                    <div class="border p-3 mb-3 bg-light rounded">
                                         <strong><?= $sub['title_en'] ?> / <?= $sub['title_hi'] ?></strong>
                                         <p><b>EN:</b> <?= $sub['content_en'] ?></p>
                                         <p><b>HI:</b> <?= $sub['content_hi'] ?></p>
+
                                         <div class="action-icons">
-                                            <form method="POST" class="d-inline">
-                                                <input type="hidden" name="sub_id" value="<?= $sub['id'] ?>">
-                                                <input type="hidden" name="sub_title_en" value="<?= htmlspecialchars($sub['title_en']) ?>">
-                                                <input type="hidden" name="sub_title_hi" value="<?= htmlspecialchars($sub['title_hi']) ?>">
-                                                <input type="hidden" name="sub_content_en" value="<?= htmlspecialchars($sub['content_en']) ?>">
-                                                <input type="hidden" name="sub_content_hi" value="<?= htmlspecialchars($sub['content_hi']) ?>">
-                                                <button type="submit" name="save_sub_page" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil-square"></i></button>
-                                            </form>
-                                            <a href="?delete_sub=<?= $sub['id'] ?>" class="btn btn-sm btn-outline-danger"
-                                               onclick="return confirm('Delete this sub-page?')">
-                                               <i class="bi bi-trash-fill"></i>
-                                            </a>
+                                            <!-- Show edit form button -->
+                                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="toggleSubPageEdit(<?= $sub['id'] ?>)">
+                                                <i class="bi bi-pencil-square"></i>
+                                            </button>
+                                            <button onclick="deleteSubPage(<?= $sub['id'] ?>,event)" class="btn btn-sm btn-outline-danger">
+                                                <i class="bi bi-trash-fill"></i>
+                                            </button>
+                                        </div>
+                                        <!-- Edit form (no <form> tag) -->
+                                        <div class="sub_page_edit_form mt-3" id="edit_form_<?= $sub['id'] ?>" style="display: none;">
+                                            <input type="hidden" name="sub_id" value="<?= $sub['id'] ?>">
+                                            <div class="row mb-2">
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Title (EN)</label>
+                                                    <input type="text" name="edit_sub_title_en" class="form-control" placeholder="Title (EN)" value="<?= htmlspecialchars($sub['title_en']) ?>">
+                                                </div>
+                                                <div class="col-md-6">
+                                                    <label class="form-label">Title (HI)</label>
+                                                    <input type="text" name="edit_sub_title_hi" class="form-control" placeholder="Title (HI)" value="<?= htmlspecialchars($sub['title_hi']) ?>">
+                                                </div>
+                                            </div>
+                                            <div class="mb-2">
+                                                <label class="form-label">Content (EN)</label>
+                                                <textarea name="edit_sub_content_en_<?= $sub['id'] ?>" class="form-control mb-2 editor" placeholder="Content (EN)"><?= $sub['content_en'] ?></textarea>
+                                            </div>
+                                            <div class="mb-2">
+                                                 <label class="form-label">Content (HI)</label>
+                                                <textarea name="edit_sub_content_hi_<?= $sub['id'] ?>" class="form-control mb-2 editor" placeholder="Content (HI)"><?= $sub['content_hi'] ?></textarea>
+                                            </div>
+                                            <button type="button" onclick="saveSubPage(<?= $sub['id'] ?>)" class="btn btn-sm btn-success">Save</button>
                                         </div>
                                     </div>
                                 <?php } ?>
@@ -204,8 +207,8 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
                 <input type="text" name="sub_title_hi[]" class="form-control" placeholder="Sub-page Title (HI)">
             </div>
         </div>
-        <textarea name="sub_content_en[]" class="form-control mb-2 wysiwyg mb-2" placeholder="Content (EN)" rows="2"></textarea>
-        <textarea name="sub_content_hi[]" class="form-control mb-2 wysiwyg mb-2" placeholder="Content (HI)" rows="2"></textarea>
+        <textarea name="sub_content_en[]" class="form-control mb-2 editor" placeholder="Content (EN)" rows="2"></textarea>
+        <textarea name="sub_content_hi[]" class="form-control mb-2d mb-2 editor" placeholder="Content (HI)" rows="2"></textarea>
         <button type="button" class="btn btn-sm btn-danger remove-sub-page">Remove</button>
     </div>
 </template>
@@ -254,12 +257,128 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    function toggleSubPageEdit(id) {
+        const form = document.getElementById('edit_form_' + id);
+        if (form.style.display === 'none') {
+            form.style.display = 'block';
+        } else {
+            form.style.display = 'none';
+        }
+    }
+
+    function saveSubPage(id) {
+        const form = document.getElementById('edit_form_' + id);
+        const enName = 'edit_sub_content_en_' + id;
+        const hiName = 'edit_sub_content_hi_' + id;
+        if (editorInstances[enName]) {
+            form.querySelector(`[name="${enName}"]`).value = editorInstances[enName].getData();
+        }
+        if (editorInstances[hiName]) {
+            form.querySelector(`[name="${hiName}"]`).value = editorInstances[hiName].getData();
+        }
+
+        const data = new FormData();
+
+        data.append('edit_sub_page_ajax', true);
+        data.append('sub_id', id);
+        data.append('sub_title_en', form.querySelector(`[name="edit_sub_title_en"]`).value);
+        data.append('sub_title_hi', form.querySelector(`[name="edit_sub_title_hi"]`).value);
+        data.append('sub_content_en', form.querySelector(`[name="${enName}"]`).value);
+        data.append('sub_content_hi', form.querySelector(`[name="${hiName}"]`).value);
+
+        fetch('update_sub_page.php', {
+            method: 'POST',
+            body: data
+        }).then(res => res.json()).then(response => {
+            Swal.fire({
+                icon: response.status === 'success' ? 'success' : 'error',
+                title: response.status === 'success' ? 'Success' : 'Error',
+                text: response.message,
+                confirmButtonColor: '#3085d6'
+            }).then(() => {
+                if (response.status === 'success') {
+                    location.reload(); // reload only on success
+                }
+            });
+        }).catch(err => {
+            Swal.fire('Error', 'Something went wrong.', 'error');
+            console.error(err);
+        });
+    }
+
+    function deleteSubPage(id,event) {
+        if (event) event.preventDefault();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "You are about to delete this sub-page!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const data = new FormData();
+                data.append('delete_sub_id', id);
+                fetch('update_sub_page.php', {
+                    method: 'POST',
+                    body: data
+                }).then(res => res.json()).then(response => {
+                    Swal.fire({
+                        icon: response.status === 'success' ? 'success' : 'error',
+                        title: response.status === 'success' ? 'Deleted' : 'Error',
+                        text: response.message,
+                        confirmButtonColor: '#3085d6'
+                    }).then(() => {
+                        if (response.status === 'success') {
+                            location.reload();
+                        }
+                    });
+                });
+            }
+        });
+    }
+    
+    function deleteMainPage(id,event) {
+        if (event) event.preventDefault();
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "This will delete the main page and all its sub-pages!",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete all!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const data = new FormData();
+                data.append('delete_main_id', id);
+                fetch('update_sub_page.php', {
+                    method: 'POST',
+                    body: data
+                }).then(res => res.json()).then(response => {
+                    Swal.fire({
+                        icon: response.status === 'success' ? 'success' : 'error',
+                        title: response.status === 'success' ? 'Deleted' : 'Error',
+                        text: response.message,
+                        confirmButtonColor: '#3085d6'
+                    }).then(() => {
+                        if (response.status === 'success') {
+                            location.reload();
+                        }
+                    });
+                });
+            }
+        });
+    }
+
     document.querySelectorAll('.add-sub-page').forEach(button => {
         button.addEventListener('click', function () {
             const parentId = this.dataset.id;
             const wrapper = document.querySelector(`.sub-page-wrapper[data-parent="${parentId}"]`);
             const template = document.getElementById('subPageTemplate').content.cloneNode(true);
             wrapper.appendChild(template);
+            initAllCKEditors();
         });
     });
 
@@ -269,14 +388,50 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
         }
     });
 
-    <?php if ($msg): ?>
+    const editorInstances = {};
+    function initCKEditorFor(el) {
+        ClassicEditor
+            .create(el, {
+                toolbar: [
+                    'heading', '|',
+                    'link','bold', 'italic','bulletedList', 'numberedList', '|',
+                    'insertTable', 'blockQuote','|',
+                    'undo', 'redo'
+                ],
+                table: {
+                    contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+                }
+            })
+            .then(editor => {
+                editorInstances[el.name] = editor;
+            }).catch(error => {
+                console.error(error);
+            });
+    }
+    function initAllCKEditors() {
+        document.querySelectorAll('textarea.editor:not([data-ckeditor-initialized])').forEach(el => {
+            el.setAttribute('data-ckeditor-initialized', 'true');
+            initCKEditorFor(el);
+        });
+    }
+
+
+    document.addEventListener('DOMContentLoaded',initAllCKEditors);
+
+   <?php if (isset($_SESSION['msg'])): ?>
         Swal.fire({
-            icon: '<?= $msgType ?>',
-            title: '<?= $msgType ?>',
-            text: '<?= $msg ?>',
+            icon: '<?= $_SESSION['msgType'] ?>',
+            title: '<?= ucfirst($_SESSION['msgType']) ?>',
+            text: '<?= $_SESSION['msg'] ?>',
             confirmButtonColor: '#3085d6'
         });
-    <?php endif; ?>
+    <?php
+    // clear message after showing
+        unset($_SESSION['msg']);
+        unset($_SESSION['msgType']);
+        endif;
+    ?>
+
 </script>
 </body>
 </html>

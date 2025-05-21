@@ -4,15 +4,6 @@ ini_set('display_errors', 1);
 include 'config/db.php';
 include 'language_switch.php';
 
-$pageData = null;
-if (isset($_GET['page_slug'])) {
-  $slug = $_GET['page_slug'];
-  $stmt = $conn->prepare("SELECT * FROM sub_pages WHERE LOWER(REPLACE(title_en, ' ', '-')) = ?");
-  $stmt->bind_param("s", $slug);
-  $stmt->execute();
-  $result = $stmt->get_result();
-  $pageData = $result->fetch_assoc();
-}
 // Fetch main pages and their subpages
 $mainPagesQuery = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
 $mainPages = [];
@@ -24,7 +15,8 @@ while ($mainPage = $mainPagesQuery->fetch_assoc()) {
     }
     $mainPages[] = $mainPage;
 }
-
+// Fetch slider images
+$sliderQuery = $conn->query("SELECT * FROM sliders ORDER BY id ASC");
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
@@ -53,6 +45,7 @@ while ($mainPage = $mainPagesQuery->fetch_assoc()) {
       <li><a href="#"><i class="fab fa-youtube"></i></a></li>
       <li class="language-switch">
         <form method="get">
+          <input type="hidden" name="page_id" value="<?= $_GET['page_id'] ?? '' ?>">
           <select name="lang" class="form-select form-select-sm" onchange="this.form.submit()">
             <option value="hi" <?= $lang === 'hi' ? 'selected' : '' ?>>हिन्दी</option>
             <option value="en" <?= $lang === 'en' ? 'selected' : '' ?>>English</option>
@@ -67,7 +60,7 @@ while ($mainPage = $mainPagesQuery->fetch_assoc()) {
 <header class="py-3 border-bottom">
   <div class="container d-flex justify-content-between align-items-center">
     <div class="logo d-flex align-items-center">
-      <a href="/" class="header__logo d-flex align-items-center">
+      <a href="index.php" class="header__logo d-flex align-items-center">
         <img src="assets/uploads/default_logo.png" alt="नगर पालिका परिषद">
         <em>
           <span style="font-size: 35px;">नगर पालिका परिषद, शिकारपुर </span><br>
@@ -84,7 +77,7 @@ while ($mainPage = $mainPagesQuery->fetch_assoc()) {
 <!-- Navigation Menu -->
 <nav class="navbar navbar-expand-lg main-menu sticky-top">
   <div class="container">
-    <a class="navbar-brand <?= !isset($_GET['page_slug']) ? 'active' : '' ?>" href="/"><i class="fa fa-home"></i></a>
+    <a class="navbar-brand active" href="index.php"><i class="fa fa-home"></i></a>
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -105,15 +98,19 @@ while ($mainPage = $mainPagesQuery->fetch_assoc()) {
             $activeClass = $isActive ? 'active' : '';
           ?>
         <li class="nav-item dropdown">
-          <a class="nav-link dropdown-toggle <?= $activeClass ?>" href="#" role="button" data-bs-toggle="dropdown">
-            <?= $lang === 'hi' ? $main['title_hi'] : $main['title_en'] ?>
+            <?php if (count($main['subpages']) > 0): ?>
+              <a class="nav-link dropdown-toggle <?= $activeClass ?>" href="#" role="button" data-bs-toggle="dropdown">
+            <?php else: ?>
+              <a class="nav-link <?= $activeClass ?>" href="#">
+            <?php endif; ?>
+            <?= $lang === 'hi' ? (!empty($main['title_hi']) ? $main['title_hi'] : $main['title_en']) : (!empty($main['title_en']) ? $main['title_en'] : $main['title_hi']) ?>
           </a>
             <?php if (count($main['subpages']) > 0): ?>
               <ul class="dropdown-menu show-on-hover">
                 <?php foreach ($main['subpages'] as $sub): ?>
                   <li>
-                    <a class="dropdown-item" href="/page/<?= urlencode(strtolower(str_replace(' ', '-', $sub['title_en']))) ?>">
-                      <?= $lang === 'hi' ? $sub['title_hi'] : $sub['title_en'] ?>
+                    <a class="dropdown-item" href="sub_page.php?page_id=<?= $sub['id'] ?>">
+                      <?= $lang === 'hi' ? (!empty($sub['title_hi']) ? $sub['title_hi'] : $sub['title_en']) : (!empty($sub['title_en']) ? $sub['title_en'] : $sub['title_hi']) ?>
                     </a>
                   </li>
                 <?php endforeach; ?>
@@ -125,6 +122,30 @@ while ($mainPage = $mainPagesQuery->fetch_assoc()) {
     </div>
   </div>
 </nav>
+
+<!-- Slider Section -->
+<section class="wrapper banner-wrapper">
+  <div class="slider-container position-relative">
+    <?php
+    $sliderImages = [];
+    while ($row = $sliderQuery->fetch_assoc()) {
+      $sliderImages[] = $row['image'];
+    }
+    foreach ($sliderImages as $index => $imgPath): ?>
+      <img src="<?= $imgPath ?>" class="<?= $index === 0 ? 'active' : '' ?>" alt="Slider <?= $index+1 ?>">
+    <?php endforeach; ?>
+    
+    <div class="slider-btn prev" onclick="prevSlide()"><i class="fas fa-chevron-left"></i></div>
+    <div class="slider-btn next" onclick="nextSlide()"><i class="fas fa-chevron-right"></i></div>
+
+    <div class="slider-controls">
+      <?php foreach ($sliderImages as $index => $_): ?>
+        <a href="#" class="indicator <?= $index === 0 ? 'active-indicator' : '' ?>" onclick="goToSlide(<?= $index ?>)"></a>
+      <?php endforeach; ?>
+      <i class="fas fa-pause" id="pausePlayBtn" onclick="toggleSlider()"></i>
+    </div>
+  </div>
+</section>
 
 </body>
 </html>
