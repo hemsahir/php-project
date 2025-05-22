@@ -11,29 +11,40 @@ if (!isset($_SESSION['admin'])) {
 }
 
 $uploadMsg = '';
+if (isset($_SESSION['uploadMsg'])) {
+    $uploadMsg = $_SESSION['uploadMsg'];
+    unset($_SESSION['uploadMsg']);
+}
 
 // Upload video
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['video'])) {
     $count = count($_FILES['video']['name']);
+    $hasError = false;
     for ($i = 0; $i < $count; $i++) {
         $name = $_FILES['video']['name'][$i];
         $tmp = $_FILES['video']['tmp_name'][$i];
         $size = $_FILES['video']['size'][$i];
 
         $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
-        if ($ext === 'mp4' && $size <= 10 * 1024 * 1024) {
+        if ($ext === 'mp4' && $size <= 50 * 1024 * 1024) {
             $newName = uniqid('vid_', true) . ".mp4";
             $target_dir = "../assets/uploads/gallery/videos/";
             if (!is_dir($target_dir)) {
                 mkdir($target_dir, 0777, true);
             }
             $target_file = $target_dir . basename($newName);
-            move_uploaded_file($tmp, $target_file);
-            $video_path = "assets/uploads/gallery/videos/" . $newName;
-            $conn->query("INSERT INTO video_gallery (video_path, is_homepage, uploaded_at) VALUES ('$video_path', 0, NOW())");
+            if (move_uploaded_file($tmp, $target_file)) {
+                $video_path = "assets/uploads/gallery/videos/" . $newName;
+                $conn->query("INSERT INTO video_gallery (video_path, is_homepage, uploaded_at) VALUES ('$video_path', 0, NOW())");
+            } else {
+                $hasError = true;
+            }
         } else {
-            $uploadMsg = 'Invalid file or size exceeded 10MB.';
+            $hasError = true;
         }
+    }
+    if ($hasError) {
+        $_SESSION['uploadMsg'] = 'Some files were invalid or exceeded 50MB.';
     }
     header("Location: video_gallery.php");
     exit();
@@ -104,7 +115,7 @@ $data = $conn->query("SELECT * FROM video_gallery ORDER BY uploaded_at DESC LIMI
             <input type="file" name="video[]" class="form-control" multiple required accept=".mp4">
             <button type="submit" class="btn btn-primary">Upload</button>
         </div>
-        <div class="form-text">Only .mp4 files, Max 10MB per video</div>
+        <div class="form-text">Only .mp4 files, Max 50MB per video</div>
     </form>
 
     <div class="row">

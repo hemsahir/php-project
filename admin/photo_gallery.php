@@ -10,10 +10,15 @@ if (!isset($_SESSION['admin'])) {
 }
 
 $uploadMsg = '';
+if (isset($_SESSION['uploadMsg'])) {
+    $uploadMsg = $_SESSION['uploadMsg'];
+    unset($_SESSION['uploadMsg']);
+}
 
 // Upload images
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
     $count = count($_FILES['photo']['name']);
+    $hasError = false;
     for ($i = 0; $i < $count; $i++) {
         $name = $_FILES['photo']['name'][$i];
         $tmp = $_FILES['photo']['tmp_name'][$i];
@@ -27,12 +32,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['photo'])) {
                 mkdir($target_dir, 0777, true);
             }
             $target_file = $target_dir . basename($newName);
-            move_uploaded_file($tmp, $target_file);
-            $image_path = "assets/uploads/gallery/photos/" . $newName;
-            $conn->query("INSERT INTO photo_gallery (image_path, is_homepage, uploaded_at) VALUES ('$image_path', 0, NOW())");
+            if (move_uploaded_file($tmp, $target_file)) {
+                $image_path = "assets/uploads/gallery/photos/" . $newName;
+                $conn->query("INSERT INTO photo_gallery (image_path, is_homepage, uploaded_at) VALUES ('$image_path', 0, NOW())");
+            } else {
+                $hasError = true;
+            }
         } else {
-            $uploadMsg = 'Invalid file or size exceeded 5MB.';
+            $hasError = true;
         }
+    }
+    if ($hasError) {
+        $_SESSION['uploadMsg'] = 'Some files were invalid or exceeded 5MB.';
     }
     header("Location: photo_gallery.php");
     exit();

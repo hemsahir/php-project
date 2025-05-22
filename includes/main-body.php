@@ -8,24 +8,50 @@ $lang = $_SESSION['lang'] ?? 'en';
 
 $online_labels = [
     'en' => [
+        'municipality' => 'Municipal Council, Shikarpur, Bulandshahr',
         'heading' => 'Online Services',
+        'video_gallery_title' => 'Video Gallery',
+        'photo_gallery_title' => 'Photo Gallery',
+        'read_more' => 'Read More',
+        'view_all' => 'View All',
+        'view_all_tenders' => 'View all Tenders',
+        'tender_page_title' => 'Tenders',
+        'press_release_page_title' => 'Press Releases',
+        'whats_new_page_title' => "What's New",
+        'web_link' => 'Web link',
+        'jan_sunvai_title' => 'Public hearing',
+        'e_news_letter_title' => 'E-news letter',
+        'download_form_title' => 'Download form',
         'services' => [
             'property_water' => ['title' => 'Property & Water Tax', 'icon' => 'fa-home'],
-            'birth_death' => ['title' => 'Birth & Death Registration', 'confirm' => 'You will be redirected to an external website', 'icon' => 'fa-users'],
+            'birth_death' => ['title' => 'Birth & Death Registration', 'confirm' => 'You are being transferred from the website of Nagar Panchayat, Uttar Pradesh and will now view content from an external website', 'icon' => 'fa-users'],
             'license' => ['title' => 'License', 'icon' => 'fa-credit-card'],
             'advertisement' => ['title' => 'Advertisement Tax', 'icon' => 'fa-newspaper-o'],
-            'mutation' => ['title' => 'Mutation', 'confirm' => 'You will be redirected to an external website', 'icon' => 'fa-slideshare'],
+            'mutation' => ['title' => 'Mutation', 'confirm' => 'You are being transferred from the website of Nagar Panchayat, Uttar Pradesh and will now view content from an external website', 'icon' => 'fa-slideshare'],
             'complaint' => ['title' => 'Complaint', 'icon' => 'fa-pencil-square-o'],
         ]
     ],
     'hi' => [
+        'municipality' => 'नगर पालिका परिषद, शिकारपुर, बुलन्दशहर',
         'heading' => 'ऑनलाइन सेवाएं',
+        'video_gallery_title' => 'वीडियो गैलरी',
+        'photo_gallery_title' => 'फोटो गैलरी',
+        'view_all' => 'सभी को देखें',
+        'read_more' => 'अधिक पढ़ें',
+        'view_all_tenders' => 'सभी निविदाएं देखें',
+        'tender_page_title' => 'निविदाएँ',
+        'press_release_page_title' => 'प्रेस प्रकाशनी',
+        'whats_new_page_title' => 'क्या नया है',
+        'web_link' => 'वेब लिंक',
+        'jan_sunvai_title' => 'जन सुनवाई',
+        'e_news_letter_title' => 'ई-न्यूज लेटर',
+        'download_form_title' => 'डाउनलोड फार्म',
         'services' => [
             'property_water' => ['title' => 'सम्पत्ति एवं जल कर', 'icon' => 'fa-home'],
-            'birth_death' => ['title' => 'जन्म एवं मृत्यु पंजीकरण', 'confirm' => 'आपको बाहरी वेबसाइट पर भेजा जाएगा', 'icon' => 'fa-users'],
+            'birth_death' => ['title' => 'जन्म एवं मृत्यु पंजीकरण', 'confirm' => 'आपको उत्तर प्रदेश की नगर पंचायत की वेबसाइट से हस्तानांतरित किया जा रहा है और अब आप किसी बाहरी वेबसाइट का कंटेंट देखेंगे', 'icon' => 'fa-users'],
             'license' => ['title' => 'लाइसेन्स', 'icon' => 'fa-credit-card'],
             'advertisement' => ['title' => 'विज्ञापन कर', 'icon' => 'fa-newspaper-o'],
-            'mutation' => ['title' => 'म्युटेशन', 'confirm' => 'आपको बाहरी वेबसाइट पर भेजा जाएगा', 'icon' => 'fa-slideshare'],
+            'mutation' => ['title' => 'म्युटेशन', 'confirm' => 'आपको उत्तर प्रदेश की नगर पंचायत की वेबसाइट से हस्तानांतरित किया जा रहा है और अब आप किसी बाहरी वेबसाइट का कंटेंट देखेंगे', 'icon' => 'fa-slideshare'],
             'complaint' => ['title' => 'शिकायत', 'icon' => 'fa-pencil-square-o'],
         ]
     ]
@@ -37,12 +63,31 @@ $whatsNew = $conn->query("SELECT title, notice_date, file_path FROM whats_new OR
 $pressRelease = $conn->query("SELECT title, notice_date, file_path FROM press_releases ORDER BY notice_date DESC LIMIT 10");
 // Fetch Tenders (Optional)
 $tenders = $conn->query("SELECT title, notice_date, file_path FROM tenders ORDER BY notice_date DESC LIMIT 10");
+
+// Get up to 3 homepage images, or fallback with total 3 images
+$photos = [];
+$res1 = $conn->query("SELECT * FROM photo_gallery WHERE is_homepage = 1 ORDER BY uploaded_at DESC LIMIT 3");
+while ($row = $res1->fetch_assoc()) $photos[] = $row;
+
+if (count($photos) < 3) {
+  $needed = 3 - count($photos);
+  $ids = array_column($photos, 'id');
+  $idList = implode(',', $ids) ?: 0;
+  $res2 = $conn->query("SELECT * FROM photo_gallery WHERE id NOT IN ($idList) ORDER BY uploaded_at DESC LIMIT $needed");
+  while ($row = $res2->fetch_assoc()) $photos[] = $row;
+}
+
+// Get homepage video, or latest video
+$video = $conn->query("SELECT * FROM video_gallery WHERE is_homepage = 1 ORDER BY uploaded_at DESC LIMIT 1")->fetch_assoc();
+if (!$video) {
+    $video = $conn->query("SELECT * FROM video_gallery ORDER BY uploaded_at DESC LIMIT 1")->fetch_assoc();
+}
 ?>
 <!DOCTYPE html>
 <html lang="<?= $lang ?>">
 <head>
   <meta charset="UTF-8">
-  <title>नगर पालिका परिषद, शिकारपुर, बुलन्दशहर</title>
+  <title><?= $labels[$lang]['municipality'] ?></title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <!-- Bootstrap 5 -->
@@ -76,7 +121,7 @@ $tenders = $conn->query("SELECT title, notice_date, file_path FROM tenders ORDER
               तारीखे-अमरोहा नामक ऐतिहासिक पुस्तक में यह उल्लखित है कि अमरोहा में 676 से 1148 ईस्वी तक राजपूत वंश का शासन था। बहराम शाह (1240-42) ने मलिक जलालुद्दीन को अमरोहा के हकीम के पद पर नियुक्त किया। प्राचीन समय में पांचाल प्रदेश के शासकों को, जिसका इस क्षेत्र पर प्रभाव था हस्तिनापुर के कुरु राजाओं द्वारा हटा दिया गया। कुषाण एवं नंद साम्राज्य के पतन के बाद इस क्षेत्र पर मौर्य वंश का भी शासन रहा तत्पश्चात समुद्रगुप्त का शासन स्थापित हुआ। लगभग दो शताब्दियों तक गुप्त वंश का शासन इस क्षेत्र पर रहा। गुप्त साम्राज्य के पतन के बाद कन्नौज के राजा मुखारी का नियंत्रण इस क्षेत्र पर हो गया इसके पश्चात् 606 से 647 ईस्वी तक यह कन्नौज नरेश हर्ष के शासन क्षेत्र में रहा। हर्ष की मृत्यु के पश्चात जनपद का उत्तरी क्षेत्र तोमर वंश के साम्राज्य क्षेत्र में रहा। पृथ्वी राज चौहान की शाहबुद्दीन गौरी के हाथों हार के पश्चात् मुस्लिम प्रभुत्व बढ़ना प्रारम्भ हुआ एवं अन्ततः राजपूत वंश के कठेरिया, बड़गूजर, गौड़, तोमर एवं अन्य क्षेत्रीय वंश सयुंक्त रूप से विदेशी मुस्लिम आक्रमणकारियों के ख़िलाफ़ खड़े हुए। 
             </p>
             <div class="view-footer">
-              <a href="#" title="Read More"><span>Read More &gt;</span></a>
+              <a href="#" title="<?= $online_labels[$lang]['read_more'] ?>"><span><?= $online_labels[$lang]['read_more'] ?> &gt;</span></a>
             </div>
           </div>
         </div>
@@ -89,7 +134,7 @@ $tenders = $conn->query("SELECT title, notice_date, file_path FROM tenders ORDER
               $ministers = [
                 ["img" => "cmup.png", "name" => "माननीय श्री योगी आदित्यनाथ जी", "role" => "(मुख्यमंत्री)"],
                 ["img" => "nagarvikash.jpg", "name" => "माननीय श्री ऐ. के. शर्मा", "role" => "(नगर विकास मंत्री)"],
-                ["img" => "dm.jpeg", "name" => "श्रीमती निधि गुप्ता वत्स, आईएएस", "role" => "(ज़िलाधिकारी)"],
+                ["img" => "dm.jpeg", "name" => "श्रीमती श्रुति शर्मा, आईएएस", "role" => "(ज़िलाधिकारी)"],
                 ["img" => "President.jpg", "name" => "श्रीमती राजबाला देवी", "role" => "(अध्यक्ष)"],
                 // ["img" => "adhishashi.jpeg", "name" => "डॉ० बृजेश कुमार", "role" => "(अधिशासी अधिकारी)"],
               ];
@@ -181,8 +226,8 @@ $tenders = $conn->query("SELECT title, notice_date, file_path FROM tenders ORDER
               <div class="page-tab-res clearfix">
                 <div id="parentHorizontalTab" style="display: block; width: 100%; margin: 0px;">
                   <ul class="resp-tabs-list hor_1">
-                    <li class="resp-tab-item hor_1 resp-tab-active"><a href="#parentHorizontalTab1" id="tab-list-1">What's New</a></li>
-                    <li class="resp-tab-item hor_1"><a href="#parentHorizontalTab2">Press Release</a></li>
+                    <li class="resp-tab-item hor_1 resp-tab-active"><a href="#parentHorizontalTab1" id="tab-list-1"><?= $online_labels[$lang]['whats_new_page_title'] ?></a></li>
+                    <li class="resp-tab-item hor_1"><a href="#parentHorizontalTab2"><?= $online_labels[$lang]['press_release_page_title'] ?></a></li>
                   </ul>
                   <div class="resp-tabs-container hor_1" style="border-color: rgb(76, 77, 82);">
                     <!-- What's New Tab -->
@@ -206,7 +251,7 @@ $tenders = $conn->query("SELECT title, notice_date, file_path FROM tenders ORDER
                             <?php endwhile; ?>
                           </ul>
                         </div>
-                        <div class="view-footer-tender"><a href="whats_new_view_all.php" title="Read More"><span>Read More &gt;</span></a></div>
+                        <div class="view-footer-tender"><a href="whats_new_view_all.php" title="<?= $online_labels[$lang]['read_more'] ?>"><span><?= $online_labels[$lang]['read_more'] ?> &gt;</span></a></div>
                       </div>
                     </div>
 
@@ -231,7 +276,7 @@ $tenders = $conn->query("SELECT title, notice_date, file_path FROM tenders ORDER
                             <?php endwhile; ?>
                           </ul>
                         </div>
-                        <div class="view-footer-tender"><a href="view_all_press.php" title="Read More"><span>Read More &gt;</span></a></div>
+                        <div class="view-footer-tender"><a href="view_all_press.php" title="<?= $online_labels[$lang]['read_more'] ?>"><span><?= $online_labels[$lang]['read_more'] ?> &gt;</span></a></div>
                       </div>
                     </div>
                   </div> 
@@ -242,7 +287,7 @@ $tenders = $conn->query("SELECT title, notice_date, file_path FROM tenders ORDER
 
           <!-- Tenders Section -->
           <div class="left-col-2">
-            <h2>Tenders</h2>
+            <h2><?= $online_labels[$lang]['tender_page_title'] ?></h2>
             <p class="text-slide1 pause" onclick="changeClass1()"></p>
             <div class="scroll-text-1">
               <ul class="list">
@@ -261,7 +306,7 @@ $tenders = $conn->query("SELECT title, notice_date, file_path FROM tenders ORDER
                 <?php endwhile; ?>
               </ul>
             </div>
-            <div class="view-footer-tender"><a href="view_all_tenders.php" title="View all Tenders"><span>View all Tenders &gt;</span></a></div>
+            <div class="view-footer-tender"><a href="view_all_tenders.php" title="<?= $online_labels[$lang]['view_all_tenders'] ?>"><span><?= $online_labels[$lang]['view_all_tenders'] ?> &gt;</span></a></div>
           </div>
         </div>
 
@@ -270,27 +315,27 @@ $tenders = $conn->query("SELECT title, notice_date, file_path FROM tenders ORDER
               <div class="banner-box-wrapper">
                         <div class="banner-box banner-box-1">
                             <div class="banner-box-content">
-                                <h2>जन सुनवाई</h2>
-                                <a href="http://jansunwai.up.nic.in/" title="External link that opens in new tab" target="_blank" onclick="return confirm('आपको उत्तर प्रदेश की नगर पंचायत की वेबसाइट से हस्तानांतरित किया जा रहा है और अब आप किसी बाहरी वेबसाइट का कंटेंट देखेंगे')">
-                                    <p>वेब लिंक</p>
+                                <h2><?= $online_labels[$lang]['jan_sunvai_title'] ?></h2>
+                                <a href="http://jansunwai.up.nic.in/" title="External link that opens in new tab" target="_blank" onclick="return confirm('<?= $online_labels[$lang]['services']['birth_death']['confirm'] ?>')">
+                                    <p><?= $online_labels[$lang]['web_link'] ?></p>
                                     <i class="fa fa-external-link"></i>
                                 </a>
                             </div>
                         </div>
                         <div class="banner-box banner-box-2">
                             <div class="banner-box-content">
-                                <h2>ई-न्यूज लेटर</h2>
-                                <a href="landing/enewslatter.aspx" title="External link that opens in new tab" target="_blank">
-                                    <p>वेब लिंक</p>
+                                <h2><?= $online_labels[$lang]['e_news_letter_title'] ?></h2>
+                                <a href="#" title="External link that opens in new tab">
+                                    <p><?= $online_labels[$lang]['web_link'] ?></p>
                                     <i class="fa fa-external-link"></i>
                                 </a>
                             </div>
                         </div>
                         <div class="banner-box banner-box-3">
                             <div class="banner-box-content">
-                                <h2>डाउनलोड फार्म</h2>
-                                <a href="landing/downloadform.aspx" title="External link that opens in new tab" target="_blank">
-                                    <p>वेब लिंक</p>
+                                <h2><?= $online_labels[$lang]['download_form_title'] ?></h2>
+                                <a href="#" title="External link that opens in new tab">
+                                    <p><?= $online_labels[$lang]['web_link'] ?></p>
                                     <i class="fa fa-external-link"></i>
                                 </a>
                             </div>
@@ -301,50 +346,51 @@ $tenders = $conn->query("SELECT title, notice_date, file_path FROM tenders ORDER
     </div>
 
 <!-- Gallery and Video Section-->
-  <div class="wrapper home-btm-slider">
-        <div class="container common-container four_content gallery-container">
-              <div class="gallery-area clearfix">
-                <div class="gallery-heading">
-                  <h3>Photo Gallery</h3>
-                    <a class="bttn-more bttn-view" href="#" title="View all Photo Gallery"><span>View All</span></a>
-                </div>
-                <div class="gallery-holder">
-                  <div id="galleryCarousel" class="flexslider">
-                    <ul class="slides">
-                      <li data-thumb="assets/uploads/carousel/1.jpg" data-thumb-alt="Slide 1" class="" style="width: 100%; float: left; margin-right: -100%; position: relative; opacity: 0; display: block; z-index: 1;">
-                        <img src="assets/uploads/carousel/1.jpg" alt="gallery2" title="Slide 1" draggable="false">
-                      </li>
-                      <li data-thumb="assets/uploads/carousel/2.jpg" data-thumb-alt="Slide 2" class="" style="width: 100%; float: left; margin-right: -100%; position: relative; opacity: 0; display: block; z-index: 1;">
-                        <img src="assets/uploads/carousel/2.jpg" alt="gallery1" title="Slide 2" draggable="false">
-                      </li>
-                      <li data-thumb="assets/uploads/carousel/3.jpg" data-thumb-alt="Slide 3" class="flex-active-slide" style="width: 100%; float: left; margin-right: -100%; position: relative; opacity: 1; display: block; z-index: 2;">
-                        <img src="assets/uploads/carousel/3.jpg" alt="gallery3" title="Slide 3" draggable="false">
-                      </li>
-                    </ul>
-                    <ul class="flex-direction-nav">
-                      <li class="flex-nav-prev"><a class="flex-prev" href="#">Previous</a></li>
-                      <li class="flex-nav-next"><a class="flex-next" href="#">Next</a></li>
-                    </ul>
-                  </div>
-                </div>
-              </div>
-                <div class="gallery-right">
-                  <div class="video-heading">
-                    <h3>Video Gallery</h3>
-                    <a class="bttn-more bttn-view" href="#" title="View all Video Gallery"><span>View All</span></a>
-                  </div>
-                    <div class="video-wrapper">
-                     <video poster="assets/uploads/carousel/1.jpg" controls="controls" autoplay="autoplay" loop="loop" muted="muted" title="कपिलवस्तु मंदिर Bharat Bhari Mandir Siddharth Nagar" class="has-media-controls-hidden">
-                        <source src="assets/videos/videohome.mp4" type="video/mp4">
-                        <span>Your browser does not support HTML5 video.</span>
-                      </video>
-                      <svg class="video-overlay-play-button" viewBox="0 0 200 200" alt="Play video">                         
-                       <circle cx="100" cy="100" r="90" fill="none" stroke-width="15" stroke="#fff"></circle>              <polygon points="70, 55 70, 145 145, 100" fill="#fff"></polygon>
-                      </svg>                    
-                    </div>
-                </div>
+<div class="wrapper home-btm-slider">
+  <div class="container common-container four_content gallery-container">
+    <div class="gallery-area clearfix">
+      <div class="gallery-heading">
+        <h3><?= $online_labels[$lang]['photo_gallery_title'] ?></h3>
+        <a class="bttn-more bttn-view" href="photo_gallery_view.php" title="View all Photo Gallery"><span><?= $online_labels[$lang]['view_all'] ?></span></a>
+      </div>
+      <div class="gallery-holder">
+        <div id="galleryCarousel" class="flexslider">
+          <ul class="slides">
+            <?php foreach ($photos as $i => $photo): ?>
+              <li data-thumb="<?= $photo['image_path'] ?>" data-thumb-alt="Slide <?= $i+1 ?>">
+                <img src="<?= $photo['image_path'] ?>" alt="gallery<?= $i+1 ?>" title="Slide <?= $i+1 ?>" draggable="false" style="width:100%; height:400px; object-fit:cover; object-position:center;">
+              </li>
+            <?php endforeach; ?>
+          </ul>
+          <ul class="flex-direction-nav">
+            <li class="flex-nav-prev"><a class="flex-prev" href="#">Previous</a></li>
+            <li class="flex-nav-next"><a class="flex-next" href="#">Next</a></li>
+          </ul>
         </div>
+      </div>
+    </div>
+    <div class="gallery-right">
+      <div class="video-heading">
+        <h3><?= $online_labels[$lang]['video_gallery_title'] ?></h3>
+        <a class="bttn-more bttn-view" href="video_gallery_view.php" title="View all Video Gallery"><span><?= $online_labels[$lang]['view_all'] ?></span></a>
+      </div>
+      <div class="video-wrapper">
+        <?php if ($video): ?>
+          <video poster="<?= $photos[0]['image_path'] ?? 'assets/uploads/carousel/placeholder.jpg' ?>" controls autoplay loop muted class="has-media-controls-hidden">
+            <source src="<?= $video['video_path'] ?>" type="video/mp4">
+            <span>Your browser does not support HTML5 video.</span>
+          </video>
+          <svg class="video-overlay-play-button" viewBox="0 0 200 200" alt="Play video">                         
+            <circle cx="100" cy="100" r="90" fill="none" stroke-width="15" stroke="#fff"></circle>              
+            <polygon points="70, 55 70, 145 145, 100" fill="#fff"></polygon>
+          </svg> 
+        <?php else: ?>
+          <p>No video available.</p>
+        <?php endif; ?>
+      </div>
+    </div>
   </div>
+</div>
 
 </section>
 </body>
