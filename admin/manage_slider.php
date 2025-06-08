@@ -1,7 +1,6 @@
 <?php
 session_start();
 include('../config/db.php');
-include('sidebar.php');
 
 // Check if admin is logged in
 if (!isset($_SESSION['admin'])) {
@@ -76,6 +75,7 @@ if (isset($_GET['delete_slider'])) {
 
 // Fetch existing sliders
 $sliders_result = $conn->query("SELECT * FROM sliders");
+include('sidebar.php');
 ?>
 
 <!DOCTYPE html>
@@ -83,8 +83,84 @@ $sliders_result = $conn->query("SELECT * FROM sliders");
 <head>
     <meta charset="UTF-8">
     <title>Manage Slider</title>
+    <link rel="icon" type="image/png" href="../assets/uploads/default_logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+    body {
+        background: #f8f9fa;
+    }
+    h2, h3 {
+        text-align: center;
+        margin-bottom: 20px;
+    }
+    form {
+        background: #ffffff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0,0,0,0.05);
+        max-width: 500px;
+        margin: auto;
+    }
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        margin-top: 30px;
+    }
+    .col-md-3 {
+        flex: 0 0 auto;
+        width: 23%;
+        text-align: center;
+    }
+    .img-fluid {
+        width: 100%;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 0 6px rgba(0,0,0,0.1);
+    }
+    .btn-danger.btn-sm {
+        width: 100%;
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+    /* Responsive fixes */
+    @media (max-width: 991px) {
+        .col-md-3 {
+            width: 32%;
+        }
+    }
+    @media (max-width: 767px) {
+        .col-md-3 {
+            width: 48%;
+        }
+        .img-fluid {
+            width: 100%;
+        }
+        form {
+            width: 100%;
+            margin-top: 20px;
+        }
+        .btn-danger.btn-sm {
+            margin-top: 10px;
+        }
+    }
+    @media (max-width: 480px) {
+        .col-md-3 {
+            width: 100%;
+        }
+        .img-fluid {
+            width: 90%;
+            margin: auto;
+        }
+        .btn-danger.btn-sm {
+            width: 90%;
+            margin: 10px auto 0;
+            display: block;
+        }
+    }
+</style>
 </head>
 <body>
     <div class="container mt-5">

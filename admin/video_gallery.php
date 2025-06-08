@@ -3,7 +3,6 @@ error_reporting(E_ALL);
 ini_set('display_errors', 1);
 session_start();
 include('../config/db.php');
-include('sidebar.php');
 
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
@@ -98,6 +97,7 @@ $total = $conn->query("SELECT COUNT(*) as total FROM video_gallery")->fetch_asso
 $totalPages = ceil($total / $limit);
 
 $data = $conn->query("SELECT * FROM video_gallery ORDER BY uploaded_at DESC LIMIT $limit OFFSET $offset");
+include('sidebar.php');
 ?>
 
 <div class="container mt-4" style="margin-left:260px">
@@ -126,11 +126,16 @@ $data = $conn->query("SELECT * FROM video_gallery ORDER BY uploaded_at DESC LIMI
                         <source src="../<?= $row['video_path'] ?>" type="video/mp4">
                         Your browser does not support the video tag.
                     </video>
-                    <div class="card-body">
-                        <a href="?toggle_homepage=1&id=<?= $row['id'] ?>&page=<?= $page ?>" class="btn btn-sm <?= $row['is_homepage'] ? 'btn-success' : 'btn-outline-secondary' ?>">
+                    <div class="card-body text-center d-grid gap-2">
+                        <a href="?toggle_homepage=1&id=<?= $row['id'] ?>&page=<?= $page ?>"
+                        class="btn btn-sm <?= $row['is_homepage'] ? 'btn-success' : 'btn-outline-secondary' ?> w-100">
                             <?= $row['is_homepage'] ? 'Shown on Homepage' : 'Show on Homepage' ?>
                         </a>
-                        <a href="?delete=1&id=<?= $row['id'] ?>&page=<?= $page ?>" onclick="return confirm('Delete this video?')" class="btn btn-sm btn-danger float-end">Delete</a>
+                        <a href="?delete=1&id=<?= $row['id'] ?>&page=<?= $page ?>"
+                        onclick="return confirm('Delete this image?')"
+                        class="btn btn-sm btn-danger w-100">
+                            Delete
+                        </a>
                     </div>
                 </div>
             </div>

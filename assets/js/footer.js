@@ -38,3 +38,27 @@ $(window).on('load', function () {
   // Initially hide arrows
   $('.flex-direction-nav a').hide();
 });
+
+
+document.addEventListener("DOMContentLoaded", function () {
+    const scrollButton = document.getElementById("scroll");
+
+    window.addEventListener("scroll", function () {
+        if (window.scrollY > 100) {
+            scrollButton.style.display = "block";
+        } else {
+            scrollButton.style.display = "none";
+        }
+    });
+
+    scrollButton.addEventListener("click", function () {
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
+
+        setTimeout(() => {
+            scrollButton.style.display = "none";
+        }, 600); // matches scroll time
+    });
+});

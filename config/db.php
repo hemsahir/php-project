@@ -4,6 +4,11 @@ $user = "root";
 $pass = "root"; // If you set a MySQL root password, write it here
 $db = "nppamroha";
 
+// $host = "localhost";
+// $user = "u982107329_root";
+// $pass = "Nppshikarpur@1root";
+// $db = "u982107329_nppshikarpur";
+
 // Connect to MySQL
 $conn = new mysqli($host, $user, $pass);
 

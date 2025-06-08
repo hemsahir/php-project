@@ -56,6 +56,7 @@ $data = $conn->query("SELECT * FROM press_releases $where ORDER BY notice_date D
 <head>
     <meta charset="UTF-8">
     <title><?= $labels[$lang]['page'] ?></title>
+    <link rel="icon" type="image/png" href="assets/uploads/default_logo.png">
     <link rel="stylesheet" href="assets/css/style.css">
     <style>
         /* same styling as what's new */
@@ -94,10 +95,11 @@ $data = $conn->query("SELECT * FROM press_releases $where ORDER BY notice_date D
         .pagination a.disabled { background-color: #ccc; pointer-events: none; }
         .pagination span.current { background-color: #333; }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
 <?php include 'includes/header.php'; ?>
-<section id="fontSize" class="wrapper body-wrapper " style="font-size: 100%;">
+<section id="press-fontSize" class="wrapper body-wrapper " style="font-size: 100%;">
     <div class="bg-wrapper inner-wrapper">
         <div class="breadcam-bg breadcam">
             <div class="container common-container four_content text-center">
@@ -119,7 +121,7 @@ $data = $conn->query("SELECT * FROM press_releases $where ORDER BY notice_date D
                 <input type="date" name="date" value="<?= htmlspecialchars($_GET['date'] ?? '') ?>" class="form-control" style="max-width: 200px;">
                 <button type="submit" class="btn btn-primary"><?= $labels[$lang]['search'] ?></button>
             </form>
-
+            <div class="responsive-table-wrapper">
             <table>
                 <thead>
                     <tr>
@@ -152,7 +154,7 @@ $data = $conn->query("SELECT * FROM press_releases $where ORDER BY notice_date D
                     <?php endif; ?>
                 </tbody>
             </table>
-
+            </div>
             <div class="pagination">
                 <?php if ($page > 1): ?>
                     <a href="?page=<?= $page - 1 ?>&search=<?= urlencode($search) ?>&date=<?= urlencode($date) ?>"><?= $labels[$lang]['prev'] ?></a>

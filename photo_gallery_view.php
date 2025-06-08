@@ -34,8 +34,10 @@ $photos = $conn->query("SELECT * FROM photo_gallery ORDER BY uploaded_at DESC LI
 <html lang="<?= $lang ?>">
 <head>
   <title><?= $labels[$lang]['page'] ?></title>
+  <link rel="icon" type="image/png" href="assets/uploads/default_logo.png">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
   <style>
     .photo-box img {
       width: 100%;

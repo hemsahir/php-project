@@ -8,13 +8,14 @@
   <!-- Bootstrap 5 -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-  <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"> -->
+  <link href="https://fonts.googleapis.com/css2?family=Hind&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/style.css">
   <link rel="stylesheet" href="assets/css/flexslider.css">
   <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
   <script src="assets/js/jquery.flexslider.js" defer></script>
   <script src="assets/js/footer.js" defer></script>
 </head>
+<body>
 <!-- Carousel Section -->
 <section class="wrapper carousel-wrapper">
         <div class="container common-container four_content carousel-container">
@@ -41,9 +42,9 @@
   <div class="footer-top-wrapper border-bottom pb-2">
     <div class="container common-container four_content footer-top-container">
       <ul>
-        <li><a href="#">Privacy Policy</a></li>
+        <li><a href="privacy_policy.php">Privacy Policy</a></li>
         <li><a href="#">Contact Us</a></li>
-        <li><a href="#">Refund and Cancellation Policy</a></li>
+        <li><a href="refund_policy.php">Refund and Cancellation Policy</a></li>
         <li><a href="#">Feedback</a></li>
         <li><a href="#">Web Information Manager</a></li>
         <li><a href="#">Visitor Analytics</a></li>
@@ -56,8 +57,11 @@
     <div class="container common-container four_content footer-bottom-container">
      <div class="copyright-content text-center w-100">
         <div>Website Content Managed by <strong>नगर पालिका परिषद, शिकारपुर, बुलन्दशहर</strong></div>
-        <div>Designed, Developed and Hosted by <a target="_blank" title="UDAN IT" href="#"><strong>UDAN IT</strong></a></div>
+        <div>Designed, Developed and Hosted by <a target="_blank" title="UDAAN IT" href="#"><strong>UDAAN IT</strong></a></div>
       </div>
     </div>
   </div>
 </footer>
+
+<p id="scroll"><span></span></p>
+</body>

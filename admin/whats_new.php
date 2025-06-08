@@ -1,6 +1,5 @@
 <?php
 session_start();
-include('sidebar.php');
 include('../config/db.php');
 
 // Check if admin is logged in
@@ -82,6 +81,7 @@ if (isset($_GET['delete'])) {
     header("Location: whats_new.php");
     exit;
 }
+include('sidebar.php');
 ?>
 
 <!DOCTYPE html>

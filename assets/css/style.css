@@ -5,7 +5,7 @@
   font-style: normal;
 }
 
-body { margin: 0; font-weight: 400;}
+body { margin: 0; font-weight: 400;font-family: 'Hind', sans-serif}
 .top-header { background: #01385f; color: #fff; padding: 8px 0; }
 .top-header ul { list-style: none; margin: 0; padding: 0; }
 .top-header ul li { display: inline-block; margin-right: 15px; }
@@ -35,7 +35,7 @@ body { margin: 0; font-weight: 400;}
 .main-menu .navbar-nav .nav-link {
   padding-top: 6px;
   padding-bottom: 6px;
-  padding-left: 12px;
+  padding-left: 15px;
   padding-right: 12px;
   color: #fff;
   position: relative;
@@ -59,7 +59,23 @@ body { margin: 0; font-weight: 400;}
 .dropdown-menu.show-on-hover {
   background-color: #c00000;
   border: none;
-  padding: 0;
+  /* padding: 0; */
+  max-width: 280px;
+  word-wrap: break-word;
+  white-space: normal;
+  overflow-wrap: break-word;
+  position: absolute;
+  inset: auto auto auto 0;
+  padding: 0.5rem 0;
+  z-index: 1000;
+}
+/* Dropdown items with wrapping and padding */
+.dropdown-menu .dropdown-item {
+  white-space: normal;
+  padding: 8px 15px;
+  font-size: 15px;
+  line-height: 1.4;
+  word-break: break-word;
 }
 
 .dropdown-menu.show-on-hover .dropdown-item {
@@ -76,7 +92,20 @@ body { margin: 0; font-weight: 400;}
 .main-menu .dropdown-item:hover { background-color: #eee; }
 .language-switch select { font-size: 12px; }
 .slider-container { position: relative; overflow: hidden; }
-.slider-container img { width: 100%; height: 400px; object-fit: cover; display: none; }
+/* .slider-container img { width: 100%; height: 400px; object-fit: cover; display: none; } */
+.slider-container img {
+  width: 100%;
+  height: auto;
+  max-height: 400px;
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .slider-container img {
+    max-height: 200px;
+  }
+}
+
 .slider-container img.active { display: block; }
 .slider-controls {
   position: absolute; bottom: 15px; right: 15px;
@@ -539,14 +568,17 @@ p.banner-content {
   background: #ccc;
   padding: 30px 20px;
   text-align: center;
-  border-radius: 10px;
+  border-radius: 12px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   color: #fff;
+  background-size: 200% 200%;
+  animation: gradientShift 10s ease infinite;
   position: relative;
+  overflow: hidden;
 }
 .banner-box-middle:hover {
   transform: translateY(-5px);
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
 }
 .banner-box-middle h2 {
   margin-bottom: 15px;
@@ -557,10 +589,35 @@ p.banner-content {
   text-decoration: none;
 }
 .banner-box-middle i {
-  color: #000; 
+  color: #000;
 }
 .banner-box-middle a {
   text-decoration: none;
+  display: block;
+}
+/* Unique and vibrant 3-shade gradients for each service box */
+.banner-box-middle:nth-child(1) {
+  background: linear-gradient(135deg, #ff7e5f, #feb47b, #ffcc70);
+}
+
+.banner-box-middle:nth-child(2) {
+  background: linear-gradient(135deg, #76b852, #8DC26F, #c5e384);
+}
+
+.banner-box-middle:nth-child(3) {
+  background: linear-gradient(135deg, #8e44ad, #9b59b6, #d2b4de);
+}
+
+.banner-box-middle:nth-child(4) {
+  background: linear-gradient(135deg, #2980b9, #3498db, #6dd5fa);
+}
+
+.banner-box-middle:nth-child(5) {
+  background: linear-gradient(135deg, #16a085, #1abc9c, #a2ded0);
+}
+
+.banner-box-middle:nth-child(6) {
+  background: linear-gradient(135deg, #e67e22, #f39c12, #f5c36c);
 }
 @media screen and (max-width: 992px) {
   .banner-box-middle {
@@ -603,17 +660,14 @@ p.banner-content {
     margin: 0;
     padding: 0;
 }
-
 .breadcam li + li::before {
     content: " > ";
     padding: 0 5px;
     color: #999;
 }
-
 .breadcam li a:hover {
     text-decoration: underline;
 }
-
 .list-wrapper h2 {
   font-size: 150%;
   padding-top: 0px;
@@ -621,10 +675,335 @@ p.banner-content {
   font-weight: 700;
   clear: both;
 }
-
 .list-wrapper h3 {
   font-size: 150%;
   padding-top: 0px;
   padding-bottom: 0px;
   clear: both;
 }
+.list-wrapper h5 {
+  font-size: 100%;
+}
+.list-wrapper p {
+  font-size: 95%;
+}
+.page-content img {
+  max-width: 100%;
+}
+.font-resize-controls button {
+  font-size: 13px;
+  padding: 4px 8px;
+  margin: 0 4px;
+  cursor: pointer;
+  background-color: #f0f0f0;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+.font-resize-controls button:hover {
+  background-color: #ddd;
+}
+.datetime-info {
+  font-size: 14px;
+  color: #fdf4f4;
+  margin-right: 5px;
+}
+.datetime-info i {
+  color: #fdf4f4;
+}
+/* Desktop & larger */
+.logo-text {
+  white-space: nowrap; /* Prevent line breaks inside */
+}
+
+.main-title {
+  font-size: 35px;
+  white-space: nowrap; /* Prevent breaking */
+}
+
+.sub-title {
+  font-size: 18px;
+  white-space: nowrap; /* Prevent breaking */
+  display: block; /* Make it appear below main title */
+  margin-top: 5px;
+  color: #444;
+}
+/*Responsive CSS */
+@media (max-width: 767px) {
+  .container {
+    flex-wrap: nowrap;
+  }
+
+  .logo-text {
+    white-space: normal; /* allow wrap only if necessary */
+  }
+
+  .main-title {
+    font-size: 20px !important;  /* smaller but still readable */
+  }
+
+  .sub-title {
+    font-size: 14px !important;
+    margin-top: 0;
+  }
+
+  /* Hide Swachh Bharat logo on mobile */
+  .swachh-logo {
+    display: none !important;
+  }
+
+  /* Adjust logo image size */
+  .logo-img {
+    max-height: 60px !important;
+  }
+
+  /* Ensure the logo and text are horizontally aligned */
+  .header__logo {
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 8px !important;
+  }
+   .slider-controls {
+    bottom: 5px;
+    right: 5px;
+    padding: 0.3em;
+    gap: 4px;
+  }
+  .slider-controls i {
+    font-size: 10px;
+    padding: 2px 5px;
+  }
+  .slider-btn {
+    padding: 6px;
+  }
+   header .container {
+    flex-direction: row !important;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+  }
+  /* .header__logo {
+    flex-direction: row;
+    align-items: center;
+    gap: 8px;
+  } */
+  /* .logo-img {
+    max-height: 50px;
+    width: auto;
+  } */
+  /* .logo span {
+    font-size: 15px !important;
+  } */
+  /* .swachh-logo img {
+    max-height: 50px;
+    width: auto;
+  } */
+  .top-header .container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .top-header ul {
+    flex-wrap: wrap;
+    gap: 5px;
+  }
+  .font-resize-controls button {
+    padding: 2px 6px;
+    font-size: 12px;
+  }
+  .datetime-info {
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  .top-header ul li{
+    margin-right: 8px !important;
+    font-size: 13px;
+  }
+  .top-header .fab {
+    font-size: 14px;
+    margin-right: 5px;
+  }
+  .language-switch {
+    width: 100%;
+    margin-top: 10px;
+  }
+   /* Breadcrumb styling */
+  .breadcam-bg {
+    padding: 10px 0;
+    text-align: left;
+  }
+  .breadcam ul.breadcrumb {
+    padding: 0 10px;
+    font-size: 14px;
+    line-height: 1.4;
+    word-wrap: break-word;
+  }
+  .breadcam li {
+    display: inline;
+    font-size: 13px;
+  }
+  .breadcam li + li::before {
+    content: " > ";
+    padding: 0 4px;
+  }
+  /* Heading and content spacing */
+  .list-wrapper h2 {
+    font-size: 20px;
+    padding: 10px 0;
+    line-height: 1.3;
+  }
+  .alert {
+    margin: 10px;
+    font-size: 14px;
+  }
+  .container.common-container {
+    padding: 0 10px;
+  }
+  hr {
+    margin: 10px 0;
+  }
+  .wrapper.list-wrapper {
+    padding: 10px 0;
+  }
+  .wrapper.list-wrapper .container {
+    padding: 0 10px !important;
+  }
+}
+
+@media (max-width: 991px) {
+  .main-menu .navbar-nav .nav-link.active::after, .main-menu .navbar-nav .nav-link:hover::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 3%;
+    width: 14%;
+    height: 2px;
+    background-color: #fff;
+    border-radius: 2px;
+}
+}
+/* Responsive table container */
+.responsive-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin-top: 20px;
+}
+/* Ensure table is scrollable and does not break layout */
+.responsive-table-wrapper table {
+  min-width: 700px;
+  width: 100%;
+  border-collapse: collapse;
+}
+/* Improve readability in small screens */
+@media (max-width: 767px) {
+  .responsive-table-wrapper table th,
+  .responsive-table-wrapper table td {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+  .responsive-table-wrapper {
+    margin-bottom: 20px;
+  }
+  .page-content {
+    padding: 15px;
+    font-size: 15px;
+  }
+}
+.page-content {
+  box-sizing: border-box;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Force any table or image to fit within mobile width */
+.page-content table,
+.page-content img {
+  max-width: 100%;
+  width: 100%;
+  height: auto;
+  display: block;
+  overflow-x: auto;
+}
+.nowrap-text {
+  white-space: nowrap;
+}
+/*Sub page right section */
+.inner-right .panel-body {
+  padding: 12px 15px;
+}
+.inner-right .panel {
+  border: none;
+  box-shadow: 0 0 5px rgba(0,0,0,0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.inner-right .panel-heading {
+  background: linear-gradient(90deg, #f0ad4e, #ec971f);
+  color: #fff;
+  font-size: 18px;
+  font-weight: 600;
+  padding: 12px 15px;
+  border-bottom: 2px solid #e08800;
+  margin-bottom: 8px;
+}
+.inner-right .btn-block {
+  width: 100%;
+  justify-content: center;
+  font-size: 14px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+.inner-right .btn i {
+  color: #fff !important;
+  margin-right: 6px;
+  font-size: 14px;
+}
+.inner-right .btn {
+  text-align: center;
+  font-weight: 500;
+  border-radius: 4px;
+}
+@media (max-width: 767px) {
+  .inner-right .btn {
+    font-size: 14px;
+  }
+   .inner-right .button-group {
+    padding: 0 5px;
+  }
+}
+/* Scroller CSS */
+#scroll {
+    position: fixed;
+    right: 10px;
+    bottom: 10px;
+    cursor: pointer;
+    width: 50px;
+    height: 50px;
+    background-color: #ec4933;
+    text-indent: -9999px;
+    display: none;
+    border-radius: 60px;
+    z-index: 222;
+}
+#scroll span {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -8px;
+    margin-top: -12px;
+    height: 0;
+    width: 0;
+    border: 8px solid transparent;
+    border-bottom-color: #ffffff;
+}
+.separator {
+  color: #fff;
+  margin: 0 8px;
+}
+

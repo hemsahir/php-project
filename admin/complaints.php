@@ -1,7 +1,6 @@
 <?php
 session_start();
 include('../config/db.php');
-include('sidebar.php');
 
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
@@ -69,6 +68,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_status'], $_PO
     header("Location: complaints.php");
     exit();
 }
+include('sidebar.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">

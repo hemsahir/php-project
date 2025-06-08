@@ -1,7 +1,6 @@
 <?php
 session_start();
 include('../config/db.php');
-include('sidebar.php');
 
 if (!isset($_SESSION['admin'])) {
     header("Location: login.php");
@@ -10,8 +9,8 @@ if (!isset($_SESSION['admin'])) {
 
 // Handle Add or Edit Main Page
 if (isset($_POST['save_main_page'])) {
-    $title_en = $_POST['title_en'];
-    $title_hi = $_POST['title_hi'];
+    $title_en = $conn->real_escape_string($_POST['title_en']);
+    $title_hi = $conn->real_escape_string($_POST['title_hi']);
     $sort_order = intval($_POST['sort_order']);
     $id = isset($_POST['main_id']) ? intval($_POST['main_id']) : 0;
 
@@ -67,16 +66,18 @@ if (isset($_POST['add_sub_page']) && isset($_POST['sub_title_en']) && is_array($
 }
 
 $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
+include('sidebar.php');
 ?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <title>Manage Pages</title>
+     <link rel="icon" type="image/png" href="../assets/uploads/default_logo.png">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
     <script src="https://cdn.ckeditor.com/ckeditor5/39.0.1/classic/ckeditor.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.bundle.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         .accordion-button {
@@ -85,6 +86,20 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
 
         .accordion-header .btn {
             z-index: 2;
+        }
+        @media (max-width: 991px) {
+            body {
+               padding-left: 260px; /* Sidebar width */
+           }
+           .accordion {
+               padding: 30px;
+           }
+           .border.p-3.mb-3.bg-light.rounded {
+            box-sizing: border-box;
+            max-width: 100%;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+        }
         }
     </style>
 </head>
@@ -134,8 +149,7 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
                             <?= $page['title_en'] ?> / <?= $page['title_hi'] ?>
                         </button>
                     </h2>
-                    <div id="collapse<?= $page['id'] ?>" class="accordion-collapse collapse"
-                         data-bs-parent="#pageAccordion">
+                    <div id="collapse<?= $page['id'] ?>" class="accordion-collapse collapse">
                         <div class="accordion-body">
                             <input type="hidden" name="parent_page_id" value="<?= $page['id'] ?>">
                             <div class="sub-page-wrapper mb-3" data-parent="<?= $page['id'] ?>"></div>
@@ -417,6 +431,35 @@ $pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
 
 
     document.addEventListener('DOMContentLoaded',initAllCKEditors);
+    document.addEventListener('DOMContentLoaded', function () {
+        const accordion = document.getElementById('pageAccordion');
+        accordion.querySelectorAll('.accordion-button').forEach(button => {
+            button.addEventListener('click', function (e) {
+                const targetSelector = this.getAttribute('data-bs-target');
+                if (!targetSelector) return;
+                const target = document.querySelector(targetSelector);
+                if (!target) return;
+                const isOpen = target.classList.contains('show');
+                // Hide all other open sections
+                accordion.querySelectorAll('.accordion-collapse.show').forEach(el => {
+                    if (el !== target) {
+                        const instance = bootstrap.Collapse.getOrCreateInstance(el);
+                        instance.hide();
+                    }
+                });
+                // Toggle the clicked section
+                const instance = bootstrap.Collapse.getOrCreateInstance(target);
+                if (isOpen) {
+                    instance.hide();  // close if already open
+                } else {
+                    instance.show();  // open if closed
+                }
+
+                // Prevent default Bootstrap toggle
+                e.preventDefault();
+            });
+        });
+    });
 
    <?php if (isset($_SESSION['msg'])): ?>
         Swal.fire({

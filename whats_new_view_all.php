@@ -57,7 +57,9 @@ $data = $conn->query("SELECT * FROM whats_new $where ORDER BY notice_date DESC L
 <head>
     <meta charset="UTF-8">
     <title><?= $labels[$lang]['page'] ?></title>
+    <link rel="icon" type="image/png" href="assets/uploads/default_logo.png">
     <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <style>
        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
         th, td {
@@ -105,7 +107,7 @@ $data = $conn->query("SELECT * FROM whats_new $where ORDER BY notice_date DESC L
 </head>
 <body>
 <?php include 'includes/header.php'; ?>
-<section id="fontSize" class="wrapper body-wrapper " style="font-size: 100%;">
+<section id="whats-new-fontSize" class="wrapper body-wrapper " style="font-size: 100%;">
         <div class="bg-wrapper inner-wrapper">
             <div class="breadcam-bg breadcam">
                 <div class="container common-container four_content text-center">
@@ -126,6 +128,7 @@ $data = $conn->query("SELECT * FROM whats_new $where ORDER BY notice_date DESC L
                     <input type="date" name="date" value="<?= htmlspecialchars($_GET['date'] ?? '') ?>" class="form-control" style="max-width: 200px;">
                     <button type="submit" class="btn btn-primary"><?= $labels[$lang]['search'] ?></button>
                 </form>
+                <div class="responsive-table-wrapper">
                 <table>
                     <thead>
                         <tr>
@@ -158,6 +161,7 @@ $data = $conn->query("SELECT * FROM whats_new $where ORDER BY notice_date DESC L
                         <?php endif; ?>
                     </tbody>
                 </table>
+                </div>
                 <!-- Pagination -->
                     <div class="pagination">
                         <?php if ($page > 1): ?>

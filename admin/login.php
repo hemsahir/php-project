@@ -23,26 +23,54 @@ if (isset($_POST['login'])) {
 <head>
     <meta charset="UTF-8">
     <title>Admin Login</title>
+    <link rel="icon" type="image/png" href="<?= htmlspecialchars($logo); ?>">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
-            background: #f7f7f7;
+            background: url('../assets/uploads/login_bg.jpeg') no-repeat center center fixed;
+            background-size: cover;
+            position: relative;
+            min-height: 100vh;
         }
-        .login-box {
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%;
+            height: 100%;
+            backdrop-filter: blur(6px);
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 0;
+        }
+       .login-box {
+            position: relative;
+            z-index: 1;
             margin-top: 60px;
             max-width: 420px;
-            background: white;
+            width: 90%;
+            background: rgba(255, 255, 255, 0.95);
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            box-shadow: 0 0 20px rgba(0,0,0,0.2);
             text-align: center;
-        }
+    }
         .logo-img {
             max-height: 80px;
             margin-bottom: 20px;
         }
         .form-label {
             float: left;
+        }
+        @media (max-width: 576px) {
+            .login-box {
+                padding: 20px;
+            }
+            .logo-img {
+                max-height: 60px;
+            }
+            h4 {
+                font-size: 18px;
+            }
         }
     </style>
 </head>

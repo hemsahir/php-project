@@ -103,6 +103,12 @@ $logo = 'assets/uploads/default_logo.png';
             </div>
         </div>
 
+        <a href="manage_financials.php" class="<?= ($active_tab == 'manage_financials') ? 'active' : ''; ?>"><i class="bi bi-file-earmark-bar-graph me-2"></i>Financial Reports</a>
+
+        <a href="download_forms.php" class="<?php echo ($active_tab == 'download_forms') ? 'active' : ''; ?>">
+            <i class="bi bi-download me-2"></i>Download Forms
+        </a>
+
         <!-- Manage Gallery Menu -->
         <div class="dropdown">
             <a href="#" class="dropdown-toggle d-block text-white py-2 px-3" data-bs-toggle="collapse" data-bs-target="#galleryMenu" aria-expanded="false">

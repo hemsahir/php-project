@@ -9,8 +9,3 @@ RUN below command in terminal to set permission of directory
 
 https://github.com/PHPMailer/PHPMailer
  https://myaccount.google.com/apppasswords ==> set app password
-
-
-
-$pages_result = $conn->query("SELECT * FROM pages ORDER BY sort_order ASC");
-# php-project

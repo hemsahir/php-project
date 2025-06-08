@@ -92,6 +92,21 @@ $conn->query("CREATE TABLE IF NOT EXISTS video_gallery (
     uploaded_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )");
 
+$conn->query("CREATE TABLE IF NOT EXISTS financial_documents (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `category` VARCHAR(50) NOT NULL,
+  `title` TEXT NOT NULL,
+  `file_path` VARCHAR(255),
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
+$conn->query("CREATE TABLE IF NOT EXISTS download_forms (
+  `id` INT AUTO_INCREMENT PRIMARY KEY,
+  `title` TEXT NOT NULL,
+  `file_path` VARCHAR(255),
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+)");
+
 echo "✅ Installation complete. Tables created.<br>";
 echo "<a href='../admin/login.php'>Go to Admin Panel</a>";
 ?>
